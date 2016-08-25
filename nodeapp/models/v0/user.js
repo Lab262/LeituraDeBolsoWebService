@@ -21,7 +21,7 @@ var UserSchema = new Schema({
     },
     updatedAt: {
       type: Date,
-      required: false
+      required: false,
       default: Date.now
     },
     readings: [

@@ -35,6 +35,8 @@ router.route('/users/:id')
       User.findOne({ _id: req.params.id}, function(err, user) {
         if (err) {
           return res.send(err);
+        } else if (user == null) {
+          return res.status(404);
         }
 
         for (prop in req.body) {

@@ -34,6 +34,8 @@ router.route('/readings/:id')
     Reading.findOne({ _id: req.params.id}, function(err, reading) {
       if (err) {
         return res.send(err);
+      } else if (reading == null) {
+        return res.status(404);
       }
 
       for (prop in req.body) {
