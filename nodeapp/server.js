@@ -16,7 +16,7 @@ app.use(bodyParser.json());
 var mongoose   = require('mongoose');
 var options = { server: { socketOptions: { keepAlive: 300000, connectTimeoutMS: 30000 } },
                 replset: { socketOptions: { keepAlive: 300000, connectTimeoutMS : 30000 } } };
-var mongodbUri = 'mongodb://thiago:waldemir@ds139985.mlab.com:39985/testmongo';
+var mongodbUri = 'mongodb://developers:Ufu-2Ss-W95-Az3@ds147985.mlab.com:47985/leituradebolso';
 mongoose.connect(mongodbUri, options);
 var conn = mongoose.connection;
 conn.on('error', console.error.bind(console, 'connection error:'));

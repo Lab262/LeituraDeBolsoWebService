@@ -1,4 +1,4 @@
-var Reading = require('../../models/v0/readings');
+var Reading = require('../../models/v0/reading');
 var express = require('express');
 var router = express.Router();
 
@@ -6,20 +6,20 @@ router.route('/readings')
 
   .get(function(req,res) {
 
-    Reading.find(function(err,Readings) {
+    Reading.find(function(err,readings) {
       if (err) {
         return res.send(err);
       }
 
-      res.json(Readings);
+      res.json(readings);
 
     });
   })
 
   .post(function(req,res) {
-    var Reading = new Reading(req.body);
+    var reading = new Reading(req.body);
 
-    Reading.save(function(err) {
+    reading.save(function(err) {
       if (err) {
         return res.send(err);
       }
@@ -28,19 +28,19 @@ router.route('/readings')
 
   })
 
-router.route('/Readings/:id')
+router.route('/readings/:id')
 
   .put(function(req,res) {
-    Reading.findOne({ _id: req.params.id}, function(err, Reading) {
+    Reading.findOne({ _id: req.params.id}, function(err, reading) {
       if (err) {
         return res.send(err);
       }
 
       for (prop in req.body) {
-        Reading[prop] = req.body[prop]
+        reading[prop] = req.body[prop]
       }
 
-      Reading.save(function(err) {
+      reading.save(function(err) {
         if(err) {
           return res.send(err);
         }
@@ -52,18 +52,18 @@ router.route('/Readings/:id')
   })
 
   .get(function(req,res) {
-    Reading.findOne({ _id: req.params.id},function(err,movie) {
+    Reading.findOne({ _id: req.params.id},function(err,reading) {
       if (err) {
         return res.send(err);
       }
-      res.json(movie);
+      res.json(reading);
     });
   })
 
   .delete(function(req,res) {
     Reading.remove({
       _id: req.params.id
-    }, function(err,movie) {
+    }, function(err,reading) {
       if(err){
         return res.send(err);
       }
