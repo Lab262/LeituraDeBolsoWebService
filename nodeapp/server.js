@@ -26,7 +26,7 @@ conn.once('open', function() {
 
 
 //Router setup
-var ROUTES = {'Readings':'/readings','Users':'/users'};
+var ROUTES = {'Readings':'/readings','Users':'/users','User-Readings':'/user-readings'};
 var VERSIONS = {'Pre-Production': '/v0'};
 for (var versionIndex in VERSIONS) {
   for (var currentRouteIndex in ROUTES) {
@@ -34,8 +34,14 @@ for (var versionIndex in VERSIONS) {
   }
 }
 
-module.exports = app;
+//Midleware
+app.use(function(err, req, res, next) {
+  if (err){
+    return res.json({message: 'Error', error: err})
+  }
+});
 
+module.exports = app;
 
 //Service setup
 var port = process.env.PORT || 8080;

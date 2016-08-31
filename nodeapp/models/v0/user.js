@@ -41,8 +41,8 @@ var UserSchema = new Schema({
           required: false,
           default: false
         },
-        readingId: {
-          type: Number,
+        _readingId: {
+          type: String,
           ref: 'Reading',
           required: [true, 'required readingId is missing']
         },
