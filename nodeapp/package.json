@@ -2,8 +2,12 @@
   "name": "node-api",
   "main": "server.js",
   "dependencies": {
+    "bcrypt": "^0.8.7",
+    "body-parser": "~1.0.1",
     "express": "~4.0.0",
+    "jsonwebtoken": "^7.1.9",
+    "mocha": "~3.0.2",
     "mongoose": "~4.1.11",
-    "body-parser": "~1.0.1"
+    "morgan": "^1.7.0"
   }
 }
