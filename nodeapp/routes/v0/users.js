@@ -55,15 +55,16 @@ router.route('/users/:id')
       email: req.body.email
     }, function(err,user) {
       if(!user){
-        return res.status.send({message: "Authentication failed. User not found"})
+        return res.status(404).send({message: "Authentication failed. User not found"})
       }
 
-      user.comparePassword(req.headers.password, function(err, isMatch) {
+      user.comparePassword(req.body.password, function(err, isMatch) {
         if (err) {
-          return res.status.send({message: "Authentication failed. Wrogn password"})
+          return res.status(403).send({message: "Authentication failed. Wrogn password"})
         }
 
         if (isMatch) {
+          return res.send({message: "AUTENTICOU"})
 
         }
 

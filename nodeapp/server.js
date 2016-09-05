@@ -4,29 +4,17 @@
 // =============================================================================================================================
 
 //call the needed packages
-var express    = require('express');
-var app        = express();
-var config = require('./config'); // get our config file
-
+const express    = require('express');
+const app        = express();
+const environment = require('./config/environment'); // get our config file
+const db = require('./config/db');
 //Configure app to user bodyParse()
 //this will let use get the data from a post
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
-//MOGOOSE
-var mongoose   = require('mongoose');
-var options = { server: { socketOptions: { keepAlive: 300000, connectTimeoutMS: 30000 } },
-                replset: { socketOptions: { keepAlive: 300000, connectTimeoutMS : 30000 } } };
-// var mongodbUri = 'mongodb://developers:Ufu-2Ss-W95-Az3@ds147985.mlab.com:47985/leituradebolso';
-mongoose.connect(config.database, options);
-var conn = mongoose.connection;
-conn.on('error', console.error.bind(console, 'connection error:'));
-conn.once('open', function() {
-  console.log('Mongolab database connected');
-});
-app.set('superSecret', config.secret); // secret variable
-
+app.set('superSecret', environment.secret); // secret variable
 
 var morgan      = require('morgan');
 app.use(morgan('dev'));
