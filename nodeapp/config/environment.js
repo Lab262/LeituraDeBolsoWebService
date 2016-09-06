@@ -12,4 +12,7 @@ module.exports = {
            host: 'localhost',
            port: 8080
    },
+   facebook: {
+     passwordSecret: "A;QWgd$j[QGe]Bh.Ugkf>?B3y696?2$#B2xwfN3hrVhFrE348g"
+   }
 };

@@ -10,7 +10,7 @@ var UserSchema = new Schema({
     },
     name: {
       type: String,
-      required: [true, 'required name is missing']
+      required: [false, 'required name is missing']
     },
     email: {
       type: String,
@@ -30,6 +30,11 @@ var UserSchema = new Schema({
       type: Date,
       required: false,
       default: Date.now
+    },
+    facebook: {
+      id: String,
+      token: String,
+      password: String
     },
     readings: [
       {
@@ -61,27 +66,50 @@ var UserSchema = new Schema({
 
 UserSchema.pre('save', function(next) {
     var user = this;
-    console.log("paassei no save")
-    // only hash the password if it has been modified (or is new)
-    if (!user.isModified('password')) return next();
-    // generate a salt
-    console.log("paassei no save apoos pasword")
+    console.log("PASSOU NO SAVE")
 
-    bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
-        if (err) return next(err);
-        // hash the password along with our new salt
-        bcrypt.hash(user.password, salt, function(err, hash) {
-            if (err) return next(err);
-            // override the cleartext password with the hashed one
-            user.password = hash;
-            next();
-        });
-    });
+    // only hash the password if it has been modified (or is new)
+    if (!user.isModified('password') && !user.isModified('facebook.password') ) return next();
+    // generate a salt
+    if (user.isModified('password')) {
+      bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
+          if (err) return next(err);
+          // hash the password along with our new salt
+          bcrypt.hash(user.password, salt, function(err, hash) {
+              if (err) return next(err);
+              // override the cleartext password with the hashed one
+              user.password = hash;
+              next();
+          });
+      });
+    } else if (user.isModified('facebook.password')) {
+      console.log(user)
+      bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
+          if (err) return next(err);
+          // hash the password along with our new salt
+          bcrypt.hash(user.facebook.password, salt, function(err, hash) {
+              if (err) return next(err);
+              // override the cleartext password with the hashed one
+              user.facebook.password = hash;
+              next();
+          });
+      });
+    } else {
+      return next();
+    }
+
 });
 
 
 UserSchema.methods.comparePassword = function(candidatePassword, cb) {
     bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
+        if (err) return cb(err);
+        cb(null, isMatch);
+    });
+};
+
+UserSchema.methods.compareFacebookPassword = function(candidatePassword, cb) {
+    bcrypt.compare(candidatePassword, this.facebook.password, function(err, isMatch) {
         if (err) return cb(err);
         cb(null, isMatch);
     });
