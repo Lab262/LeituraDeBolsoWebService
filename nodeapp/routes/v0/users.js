@@ -45,14 +45,16 @@ router.route('/users/:id')
 
 .put(function(req,res) {
   var updateObj = {$set: {}};
-  for(var param in req.body) {
-    updateObj.$set[param] = req.body[param];
-  }
-  User.update(
+
+  User.findOne(
     {_id: req.params.id},
-    updateObj,
     function(err,user) {
-      res.json({message: 'user successufully updated'})
+      for(var param in req.body) {
+        user[param] = req.body[param];
+      }
+      user.save(function(err,user) {
+        res.json({user: user,message: 'user successufully updated'})
+      })
     })
   })
 

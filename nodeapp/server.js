@@ -15,7 +15,12 @@ app.set('superSecret', environment.secret); // secret variable
 
 app.use(function(req, res, next){
 
-  const isUserPostRoute = ((req.path.indexOf('users') > -1 && req.method == 'POST') || req.path.indexOf('login') > -1 ||  req.path.indexOf('verifyEmail') > -1) 
+  const isUserPostRoute = ((req.path.indexOf('users') > -1 && req.method == 'POST')
+  || req.path.indexOf('login') > -1
+  || req.path.indexOf('verifyEmail') > -1
+  || req.path.indexOf('resendVerificationEmailLink') > -1
+  || req.path.indexOf('forgotPassword') > -1)
+
   if (!isUserPostRoute) {
     jwtHelper.verifyJsonWebToken(req,res,next,app);
   }

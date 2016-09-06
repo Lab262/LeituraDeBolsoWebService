@@ -3,6 +3,8 @@ var express = require('express');
 var router = express.Router();
 const Environment = require('../../config/environment');
 const Jwt = require('jsonwebtoken');
+const Mailer = require('../../lib/mailer')
+const PasswordGenerator = require('password-generator');
 
 router.route('/login')
 
@@ -24,9 +26,7 @@ router.route('/login')
       user.comparePassword(req.body.password, function(err, isMatch) {
         if (err) {
           return res.status(401).send({message: "Authentication failed. Wrogn password"})
-        }
-
-        if (isMatch) {
+        } if (isMatch) {
                var result = {
                    token: Jwt.sign(user,Environment.secret),
                }
@@ -63,13 +63,13 @@ router.route('/verifyEmail/:token')
 
   })
 
-  router.route('/resendVerificationEmailLink/:token')
+router.route('/resendVerificationEmailLink')
     .post(function(req,res){
 
       User.findOne({ email: req.body.email}, function(err, user) {
         if (!err) {
             if (user === null) {
-            	return res.statis(403).send({message: "Invalid email or password"});
+            	return res.status(403).send({message: "Invalid email or password"});
             }
 
             user.comparePassword(req.body.password, function(err, isMatch) {
@@ -80,16 +80,50 @@ router.route('/verifyEmail/:token')
               if (user.isEmailVerified) {
                 return res.status(403).send({message: "Your email address is already verified"})
               }else{
+
                 var tokenData = {
-                    userName: user.userName,
-                    id: user._id
+                  email: user.email,
+                  id: user._id
                 }
-                Common.sentMailVerificationLink(user,Jwt.sign(tokenData, privateKey));
-                return res.send(Boom.forbidden("account verification link is sucessfully send to an email id"));
+
+                var token = Jwt.sign(tokenData,Environment.secret)
+                Mailer.sentMailVerificationLink(user,token);
+                return res.json({message:"account verification link is sucessfully send to your email id: " + user.email});
               }
             });
         }
     });
+  })
+
+router.route('/forgotPassword')
+  .post(function(req,res) {
+    var random = PasswordGenerator(12, false);
+
+    User.findOne({ email: req.body.email }, function(err, user){
+      if (!err) {
+          if (user === null){
+              return res.status(403).send({message:"This email has not been registered"});
+          }
+          if (user.isEmailVerified == false ) {
+
+            var tokenData = {
+              email: user.email,
+              id: user._id
+            }
+            var token = Jwt.sign(tokenData,Environment.secret)
+            Mailer.sentMailVerificationLink(user,token);
+
+            return res.status(403).send({message:"Your email address is not verified. please verify your email address to proceed"})
+          } else {
+            user.password = random;
+            user.save(function(err,user) {
+              Mailer.sentMailForgotPassword(user, random)
+              return res.json({message: "password is send to your registered email id: " + req.body.email});
+            })
+          }
+      }
+    });
+
   })
 
 module.exports = router;

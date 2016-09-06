@@ -22,6 +22,13 @@ exports.sentMailVerificationLink = function(user,token) {
     mail(from, user.email , "Account Verification", mailbody);
 };
 
+exports.sentMailForgotPassword = function(user, newPassword) {
+    var from = Config.email.accountName+" Team<" + Config.email.username + ">";
+    var mailbody = "<p>Your "+Config.email.accountName+"  Account Credential</p><p>email : "+user.email+" , password : "+newPassword+"</p>"
+    mail(from, user.email , "Account new password", mailbody);
+
+};
+
 // exports.sentMailForgotPassword = function(user) {
 //     var from = Config.email.accountName+" Team<" + Config.email.username + ">";
 //     var mailbody = "<p>Your "+Config.email.accountName+"  Account Credential</p><p>email : "+user.email+" , password : "+decrypt(user.password)+"</p>"

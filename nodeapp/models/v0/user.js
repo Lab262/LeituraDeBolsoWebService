@@ -61,11 +61,12 @@ var UserSchema = new Schema({
 
 UserSchema.pre('save', function(next) {
     var user = this;
-
+    console.log("paassei no save")
     // only hash the password if it has been modified (or is new)
     if (!user.isModified('password')) return next();
-
     // generate a salt
+    console.log("paassei no save apoos pasword")
+
     bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
         if (err) return next(err);
         // hash the password along with our new salt
@@ -77,6 +78,7 @@ UserSchema.pre('save', function(next) {
         });
     });
 });
+
 
 UserSchema.methods.comparePassword = function(candidatePassword, cb) {
     bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {

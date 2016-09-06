@@ -9,7 +9,8 @@
     "mocha": "~3.0.2",
     "mongoose": "~4.2.9",
     "morgan": "^1.7.0",
-    "randomstring": "^1.1.5",
-    "nodemailer": "^0.7.1"
+    "nodemailer": "^0.7.1",
+    "password-generator": "^2.0.2",
+    "randomstring": "^1.1.5"
   }
 }
