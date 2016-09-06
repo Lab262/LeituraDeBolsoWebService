@@ -14,8 +14,7 @@ const jwtHelper = require('./lib/jwthelper');
 app.set('superSecret', environment.secret); // secret variable
 
 app.use(function(req, res, next){
-  console.log(res)
-  console.log(req);
+
   const isUserPostRoute = ((req.path.indexOf('users') > -1 && req.method == 'POST') || req.path.indexOf('authenticate') > -1)
   if (!isUserPostRoute) {
     jwtHelper.verifyJsonWebToken(req,res,next,app);

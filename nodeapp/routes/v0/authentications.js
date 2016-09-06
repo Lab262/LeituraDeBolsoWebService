@@ -22,7 +22,6 @@ router.route('/authenticate')
 
         if (isMatch) {
                var result = {
-                   email: user.email,
                    token: Jwt.sign(user,Environment.secret),
                }
                return res.json(result);

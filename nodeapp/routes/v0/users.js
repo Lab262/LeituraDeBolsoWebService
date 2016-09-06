@@ -9,7 +9,11 @@ router.route('/users')
 
 .get(function(req,res) {
   User.find(function(err,users) {
-    res.json(users);
+    var collection = {users: users}
+    var result = {
+        token: Jwt.sign(collection,Environment.secret),
+    }
+    res.json(result);
   });
 })
 
@@ -17,7 +21,7 @@ router.route('/users')
   var user = new User(req.body);
   user.save(function(err) {
     var token = Jwt.sign(user,Environment.secret)
-    
+
     res.send({message: 'user successfully added',user: user, token: token});
   });
 })
