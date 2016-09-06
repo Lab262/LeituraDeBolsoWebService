@@ -9,20 +9,20 @@ router.route('/users')
 
 .get(function(req,res) {
   User.find(function(err,users) {
-    var collection = {users: users}
-    var result = {
-        token: Jwt.sign(collection,Environment.secret),
-    }
-    res.json(result);
+    res.json(users);
   });
 })
 
 .post(function(req,res) {
-  var user = new User(req.body);
-  user.save(function(err) {
-    var token = Jwt.sign(user,Environment.secret)
-
-    res.send({message: 'user successfully added',user: user, token: token});
+  User.count({email: req.body.email}, function(err, count) {
+          if (count > 0) {
+            return res.status(403).json({message: "This email is already in use"})
+          }
+          var user = new User(req.body);
+          user.save(function(err) {
+         var token = Jwt.sign(user,Environment.secret)
+         res.send({message: 'user successfully added',user: user, token: token});
+     });
   });
 })
 
@@ -37,7 +37,7 @@ router.route('/users/:id')
     {_id: req.params.id},
     updateObj,
     function(err,user) {
-      return res.json({message: 'user successufully updated'})
+      res.json({message: 'user successufully updated'})
     })
   })
 
