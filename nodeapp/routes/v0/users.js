@@ -1,6 +1,8 @@
 var User = require('../../models/v0/user');
 var express = require('express');
 var router = express.Router();
+const Environment = require('../../config/environment');
+const Jwt = require('jsonwebtoken');
 
 
 router.route('/users')
@@ -14,7 +16,9 @@ router.route('/users')
 .post(function(req,res) {
   var user = new User(req.body);
   user.save(function(err) {
-    res.send({message: 'user successfully added'});
+    var token = Jwt.sign(user,Environment.secret)
+    
+    res.send({message: 'user successfully added',user: user, token: token});
   });
 })
 
@@ -47,32 +51,4 @@ router.route('/users/:id')
     });
   })
 
-  router.route('/users/authenticate')
-
-  .post(function(req, res){
-
-    User.findOne({
-      email: req.body.email
-    }, function(err,user) {
-      if(!user){
-        return res.status(404).send({message: "Authentication failed. User not found"})
-      }
-
-      user.comparePassword(req.body.password, function(err, isMatch) {
-        if (err) {
-          return res.status(403).send({message: "Authentication failed. Wrogn password"})
-        }
-
-        if (isMatch) {
-          return res.send({message: "AUTENTICOU"})
-
-        }
-
-      })
-
-    })
-
-  })
-
-
-  module.exports = router;
+module.exports = router;

@@ -8,32 +8,40 @@ const express    = require('express');
 const app        = express();
 const environment = require('./config/environment'); // get our config file
 const db = require('./config/db');
+const routesSetup = require('./config/routes');
+const jwtHelper = require('./lib/jwthelper');
+
+app.set('superSecret', environment.secret); // secret variable
+
+app.use(function(req, res, next){
+  console.log(res)
+  console.log(req);
+  const isUserPostRoute = ((req.path.indexOf('users') > -1 && req.method == 'POST') || req.path.indexOf('authenticate') > -1)
+  if (!isUserPostRoute) {
+    jwtHelper.verifyJsonWebToken(req,res,next,app);
+  }
+  next();
+});
+
 //Configure app to user bodyParse()
 //this will let use get the data from a post
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
-app.set('superSecret', environment.secret); // secret variable
 
 var morgan      = require('morgan');
 app.use(morgan('dev'));
-//Router setup
-var ROUTES = {'Readings':'/readings','Users':'/users','User-Readings':'/user-readings'};
-var VERSIONS = {'Pre-Production': '/v0'};
-for (var versionIndex in VERSIONS) {
-  for (var currentRouteIndex in ROUTES) {
-    app.use('/api' + VERSIONS[versionIndex], require('./routes' + VERSIONS[versionIndex] + ROUTES[currentRouteIndex]));
-  }
-}
 
-//Midleware
-app.use(function(err, req, res, next) {
-  if (err){
-    return res.json({message: 'Error', error: err})
-  }
+routesSetup.setupRoutesAndVersions(app);
+
+app.use(function (err, req, res, next) {
+  console.log('passou no error loger')
+    if(err) {
+        res.status(500).send(err.message); //Never called
+    }
+    next();
 });
-
 
 module.exports = app;
 
