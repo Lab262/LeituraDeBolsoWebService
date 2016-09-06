@@ -19,6 +19,6 @@ exports.verifyJsonWebToken = function(req,res, next,app) {
    } else {
      // if there is no token
      // return an error
-     return res.status(403).send({message: 'Missing json web token.'});
+     return res.status(401).send({message: 'Missing json web token.'});
    }
 };

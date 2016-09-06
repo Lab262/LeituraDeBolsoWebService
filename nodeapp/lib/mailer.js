@@ -14,43 +14,20 @@ var smtpTransport = nodemailer.createTransport("SMTP", {
     }
 });
 
-exports.decrypt = function(password) {
-    return decrypt(password);
-};
-
-exports.encrypt = function(password) {
-    return encrypt(password);
-};
 
 exports.sentMailVerificationLink = function(user,token) {
     var textLink = "http://"+Config.server.host+":"+ Config.server.port+"/"+Config.email.verifyEmailUrl+"/"+token;
     var from = Config.email.accountName+" Team<" + Config.email.username + ">";
-    var mailbody = "<p>Thanks for Registering on "+Config.email.accountName+" </p><p>Please verify your email by clicking on the verification link below.<br/><a href=\"'+ textLink.toString() + '\">Verification Link</a></p>"
-    mail(from, user.username , "Account Verification", mailbody);
+    var mailbody = "<p>Thanks for Registering on "+Config.email.accountName+" </p><p>Please verify your email by clicking on the verification link below.<br/><a href='" + textLink + "'>Verification Link</a></p>"
+    mail(from, user.email , "Account Verification", mailbody);
 };
 
-exports.sentMailForgotPassword = function(user) {
-    var from = Config.email.accountName+" Team<" + Config.email.username + ">";
-    var mailbody = "<p>Your "+Config.email.accountName+"  Account Credential</p><p>username : "+user.username+" , password : "+decrypt(user.password)+"</p>"
-    mail(from, user.username , "Account password", mailbody);
-};
+// exports.sentMailForgotPassword = function(user) {
+//     var from = Config.email.accountName+" Team<" + Config.email.username + ">";
+//     var mailbody = "<p>Your "+Config.email.accountName+"  Account Credential</p><p>email : "+user.email+" , password : "+decrypt(user.password)+"</p>"
+//     mail(from, user.username , "Account password", mailbody);
+// };
 
-
-// method to decrypt data(password)
-function decrypt(password) {
-    var decipher = crypto.createDecipher(algorithm, privateKey);
-    var dec = decipher.update(password, 'hex', 'utf8');
-    dec += decipher.final('utf8');
-    return dec;
-}
-
-// method to encrypt data(password)
-function encrypt(password) {
-    var cipher = crypto.createCipher(algorithm, privateKey);
-    var crypted = cipher.update(password, 'utf8', 'hex');
-    crypted += cipher.final('hex');
-    return crypted;
-}
 
 function mail(from, email, subject, mailbody){
     var mailOptions = {

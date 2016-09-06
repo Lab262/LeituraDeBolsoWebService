@@ -3,7 +3,7 @@ var express = require('express');
 var router = express.Router();
 const Environment = require('../../config/environment');
 const Jwt = require('jsonwebtoken');
-
+const Mailer = require('../../lib/mailer')
 
 router.route('/users')
 
@@ -14,14 +14,29 @@ router.route('/users')
 })
 
 .post(function(req,res) {
-  User.count({email: req.body.email}, function(err, count) {
-          if (count > 0) {
-            return res.status(403).json({message: "This email is already in use"})
+
+  User.findOne({email: req.body.email}, function(err, user) {
+
+          if (user != null) {
+            if (user.isEmailVerified) {
+              return res.status(403).send({message: "This email is already in use"})
+            } else {
+              User.remove({email: req.body.email}, function (err) {
+              });
+            }
           }
-          var user = new User(req.body);
-          user.save(function(err) {
-         var token = Jwt.sign(user,Environment.secret)
-         res.send({message: 'user successfully added',user: user, token: token});
+          var newUser = new User(req.body);
+          newUser.save(function(err) {
+
+            var tokenData = {
+              email: newUser.email,
+              id: newUser._id
+            }
+
+         var token = Jwt.sign(tokenData,Environment.secret)
+
+         Mailer.sentMailVerificationLink(newUser,token);
+         res.send({message: 'Please confirm your email id by clicking on link in your email:' + newUser.email , user: newUser, token: token});
      });
   });
 })

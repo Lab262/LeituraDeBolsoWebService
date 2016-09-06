@@ -16,6 +16,11 @@ var UserSchema = new Schema({
       type: String,
       required: [true, 'required email is missing']
     },
+    isEmailVerified: {
+      type: Boolean,
+      required: false,
+      default: false
+    },
     createdAt: {
       type: Date,
       required: false,

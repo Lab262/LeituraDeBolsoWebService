@@ -17,7 +17,7 @@ router.route('/users/:userId/readings')
 
   .post(function(req,res) {
     if (req.body._readingId == null) {
-      return res.status(403).send({message: "_readingId is missing"});
+      return res.status(422).send({message: "_readingId is missing"});
     }
     Reading.count({_id: req.body._readingId}, function (err, count){
       if(count <= 0){

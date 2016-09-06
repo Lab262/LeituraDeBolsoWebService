@@ -7,7 +7,9 @@
     "express": "~4.0.0",
     "jsonwebtoken": "^7.1.9",
     "mocha": "~3.0.2",
-    "mongoose": "~4.1.11",
-    "morgan": "^1.7.0"
+    "mongoose": "~4.2.9",
+    "morgan": "^1.7.0",
+    "randomstring": "^1.1.5",
+    "nodemailer": "^0.7.1"
   }
 }
