@@ -3,6 +3,8 @@ var Reading = require('../../models/v0/reading')
 var express = require('express')
 var router = express.Router()
 var errorHelper= require('../../lib/error-handler')
+var mongooseCallbacks = require('../../lib/mongoose-callbacks')
+var objectSerializer = require('../../lib/object-serializer')
 
 router.route('/users/:userId/readings')
 
@@ -38,13 +40,11 @@ router.route('/users/:userId/readings')
                 $each: [req.body]}
               }},
               {upsert:true},
-              function(err){
-                errorHelper.errorHandler(err,req,res)
-                          return res.send({message: "user-reading successfully added"})
+              mongooseCallbacks.callbackWithMessage("user-reading successfully added")
+            )
           })
         })
       })
-  })
 
   .delete(function(req,res) {
     User.update(
@@ -53,10 +53,9 @@ router.route('/users/:userId/readings')
         {'readings':
           []
          }
-       }, function(err){
-         errorHelper.errorHandler(err,req,res)
-      return res.json({message: 'user-readings successufully deleted'})
-    })
+       },
+       mongooseCallbacks.callbackWithMessage("user-readings successufully deleted")
+     )
   })
 
 router.route('/users/:userId/readings/:readingId')
@@ -71,20 +70,15 @@ router.route('/users/:userId/readings/:readingId')
   })
 
   .put(function(req,res) {
-    var updateObj = {$set: {}}
-    for(var param in req.body) {
-      if (req.body.hasOwnProperty(param)) {
-        updateObj.$set['readings.$.'+param] = req.body[param]
-      }
-    }
+
+    var updateObj = objectSerializer.deserializerJSONAndCreateAUpdateClosure('readings.$.',req.body)
+
     User.update(
       { _id: req.params.userId,
         'readings._readingId': req.params.readingId},
         updateObj,
-        function(err) {
-          errorHelper.errorHandler(err,req,res)
-          return res.json({message: 'user-reading successufully updated'})
-    })
+        mongooseCallbacks.callbackWithMessage("user-reading successufully updated")
+    )
   })
 
   .delete(function(req,res) {
@@ -95,10 +89,8 @@ router.route('/users/:userId/readings/:readingId')
            {_readingId: req.params.readingId}
          }
        },
-       function(err){
-         errorHelper.errorHandler(err,req,res)
-         return res.json({message: 'user-reading successufully deleted'})
-    })
+       mongooseCallbacks.callbackWithMessage("user-reading successufully deleted")
+    )
   })
 
 

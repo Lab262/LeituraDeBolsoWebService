@@ -5,6 +5,8 @@ var Environment = require('../../config/environment')
 var Jwt = require('jsonwebtoken')
 var Mailer = require('../../lib/mailer')
 var errorHelper= require('../../lib/error-handler')
+var mongooseCallbacks = require('../../lib/mongoose-callbacks')
+var objectSerializer = require('../../lib/object-serializer')
 
 router.route('/users')
 
@@ -54,11 +56,9 @@ router.route('/users/:id')
       if(!user){
         errorHelper.entityNotFoundError(req,res)
       }
-      for(var param in req.body) {
-        if(req.body.hasOwnProperty(param)) {
-          user[param] = req.body[param]
-        }
-      }
+
+      var user =  objectSerializer.deserializerJSONIntoObject(user,req.body)
+
       user.save(function(err,user) {
         res.json({user: user,message: 'user successufully updated'})
       })
@@ -75,10 +75,9 @@ router.route('/users/:id')
   .delete(function(req,res) {
     User.remove({
       _id: req.params.id
-    }, function(err) {
-      errorHelper.errorHandler(err,req,res)
-      res.json({message: 'user successufully deleted'})
-    })
+    },
+    mongooseCallbacks.callbackWithMessage("user successufully deleted")
+    )
   })
 
 module.exports = router

@@ -3,42 +3,28 @@ var express = require('express')
 var router = express.Router()
 var Environment = require('../../config/environment')
 var Jwt = require('jsonwebtoken')
+var JwtHelper = require('../../lib/jwthelper')
+var mongooseCallbacks = require('../../lib/mongoose-callbacks')
 var Mailer = require('../../lib/mailer')
 var PasswordGenerator = require('password-generator')
 var errorHelper= require('../../lib/error-handler')
 
 router.route('/auth/login')
-
 .post(function(req, res){
-
-  User.findOne({
-    email: req.body.email
-  }, function(err,user) {
-
-    if(!user){
-      return res.status(401).send({message: "Authentication failed. User not found"})
-    }
-
-    if(!user.isEmailVerified) {
-      return res.status(403).send({message: "Your email address is not verified. please verify your email address to proceed"})
-    }
-
-    user.comparePassword(req.body.password, function(err, isMatch) {
+  verifyUserAndConfirmMailVerification(req,res,function(req,res,user) {
+    JwtHelper.comparePassword(req.body.password, user.password, function(err, isMatch) {
       if (err) {
         return res.status(401).send({message: "Authentication failed. Wrogn password"})
       } if (isMatch) {
-        var tokenData = {
-          email: user.email,
-          id: user._id
-        }
 
         var result = {
-          token: Jwt.sign(tokenData,Environment.secret),
+          token: Jwt.sign(user.tokenData,Environment.secret),
         }
         return res.json(result)
       }
     })
   })
+
 })
 
 router.route('/auth/verifyEmail/:token')
@@ -58,46 +44,18 @@ router.route('/auth/verifyEmail/:token')
       }
       user.isEmailVerified = true
 
-      user.save(function(err) {
-        errorHelper.errorHandler(err,req,res)
-        return res.json({message:"account sucessfully verified"})
-      })
+      user.save(mongooseCallbacks.callbackWithMessage("account sucessfully verified"))
 
     })
   })
-
-
 })
 
 router.route('/auth/resendVerificationEmailLink')
 .post(function(req,res){
-
-  User.findOne({ email: req.body.email}, function(err, user) {
-    if (!err) {
-      if (user === null) {
-        return res.status(403).send({message: "Invalid email or password"})
-      }
-
-      user.comparePassword(req.body.password, function(err, isMatch) {
-        if (err || !isMatch) {
-          return res.status(401).send({message: "Authentication failed. Wrong password"})
-        }
-
-        if (user.isEmailVerified) {
-          return res.status(403).send({message: "Your email address is already verified"})
-        }else{
-
-          var tokenData = {
-            email: user.email,
-            id: user._id
-          }
-
-          var token = Jwt.sign(tokenData,Environment.secret)
-          Mailer.sentMailVerificationLink(user,token)
-          return res.json({message:"account verification link is sucessfully send to your email id: " + user.email})
-        }
-      })
-    }
+  verifyUserAndConfirmMailVerification(req,res, function(req,res,user) {
+    var token = Jwt.sign(user.tokenData,Environment.secret)
+    Mailer.sentMailVerificationLink(user,token)
+    return res.json({message:"account verification link is sucessfully send to your email id: " + user.email})
   })
 })
 
@@ -112,11 +70,7 @@ router.route('/auth/forgotPassword')
       }
       if (user.isEmailVerified === false ) {
 
-        var tokenData = {
-          email: user.email,
-          id: user._id
-        }
-        var token = Jwt.sign(tokenData,Environment.secret)
+        var token = Jwt.sign(user.tokenData,Environment.secret)
         Mailer.sentMailVerificationLink(user,token)
 
         return res.status(403).send({message:"Your email address is not verified. please verify your email address to proceed"})
@@ -149,12 +103,8 @@ router.route('/auth/facebook')
       newUser.password = req.body.facebook.password
       newUser.save(function(err) {
         errorHelper.errorHandler(err,req,res)
-        var tokenData = {
-          email: newUser.email,
-          id: newUser._id
-        }
 
-        var token = Jwt.sign(tokenData,Environment.secret)
+        var token = Jwt.sign(newUser.tokenData,Environment.secret)
 
         return res.json({message: 'successufully create account throught facebook with email:' + newUser.email , user: newUser, token: token})
       })
@@ -163,35 +113,42 @@ router.route('/auth/facebook')
       user.facebook.password = req.body.facebook.password
       user.save(function(err) {
         errorHelper.errorHandler(err,req,res)
-        var tokenData = {
-          email: user.email,
-          id: user._id
-        }
-
-        var token = Jwt.sign(tokenData,Environment.secret)
+        var token = Jwt.sign(user.tokenData,Environment.secret)
 
         return res.json({message: 'successufully associate account throught facebook with email:' + user.email , user: newUser, token: token})
       })
     } else {
 
-              user.compareFacebookPassword(req.body.facebook.password, function(err, isMatch) {
-                if (err) {
-                  return res.status(401).send({message: "Authentication failed. Wrogn password"})
-                }
-                if (isMatch) {
-                  var tokenData = {
-                    email: user.email,
-                    id: user._id
-                  }
-                           var token = Jwt.sign(tokenData,Environment.secret)
-                       return res.json({message: 'successufully logged throught facebook with email:' + user.email , user: user, token: token})
-                }
-              })
+      JwtHelper.comparePassword(req.body.facebook.password, user.facebook.password, function(err, isMatch) {
+        if (err) {
+          return res.status(401).send({message: "Authentication failed. Wrogn password"})
+        }
+        if (isMatch) {
+
+          var token = Jwt.sign(user.tokenData,Environment.secret)
+          return res.json({message: 'successufully logged throught facebook with email:' + user.email , user: user, token: token})
+        }
+      })
     }
 
   })
 })
 
+function verifyUserAndConfirmMailVerification(req,res,callbackAfterVerification){
+  User.findOne({ email: req.body.email }, function(err,user) {
+    errorHelper.errorHandler(err,req,res)
 
+    if(!user){
+      return res.status(401).send({message: "Authentication failed. User not found"})
+    }
+
+    if(!user.isEmailVerified) {
+      return res.status(403).send({message: "Your email address is not verified. please verify your email address to proceed"})
+    } else {
+      callbackAfterVerification(req,res,user)
+    }
+  })
+
+}
 
 module.exports = router
