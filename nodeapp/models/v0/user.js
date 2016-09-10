@@ -104,11 +104,13 @@ UserSchema.pre('save', function(next) {
     }
 
 })
-UserSchema.methods.tokenData = function() {
+
+UserSchema.virtual('tokenData').get(function () {
   var tokenData = {
     email: this.email,
     id: this._id
   }
   return tokenData
-}
+});
+
 module.exports = mongoose.model('User', UserSchema)

@@ -3,6 +3,7 @@ var bcrypt       = require('bcrypt')
 
 
 exports.verifyJsonWebToken = function(req,res, next,app) {
+  console.log("===========================================================================================")
 
    var token = req.headers['x-access-token']
    // decode token
@@ -24,8 +25,8 @@ exports.verifyJsonWebToken = function(req,res, next,app) {
    }
 }
 
-exports.comparePassword = function(candidatePassword,  cb) {
-    bcrypt.compare(candidatePassword, this.facebook.password, function(err, isMatch) {
+exports.comparePassword = function(candidatePassword,passwordToCompare,  cb) {
+    bcrypt.compare(candidatePassword, passwordToCompare, function(err, isMatch) {
         if (err) { return cb(err) }
         cb(null, isMatch)
     })

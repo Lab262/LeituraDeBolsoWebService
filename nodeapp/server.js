@@ -10,12 +10,10 @@ var environment = require('./config/environment')  // get our config file
 var db = require('./config/db')
 var routesSetup = require('./config/routes')
 var jwtHelper = require('./lib/jwthelper')
-var errorHelper = require('./lib/error-handler')
 
 db.setupDatabase()
 
 app.set('superSecret', environment.secret)  // secret variable
-app.use(errorHelper.errorHandler)
 
 //Block secret urls midlleware
 app.use(function(req, res, next){
@@ -41,9 +39,8 @@ app.use(morgan('dev'))
 routesSetup.setupRoutesAndVersions(app)
 
 app.use(function (err, req, res, next) {
-  console.log('passou no error loger')
     if(err) {
-        res.status(500).send(err.message)  //Never called
+        res.send(err.message)
     }
     next()
 })

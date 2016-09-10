@@ -1,7 +1,8 @@
 
 
 exports.errorHandler = function(err,req,res) {
-  res.status(500).json({error: err})
+  if (err)
+    res.status(500).json({error: err})
 }
 
 exports.entityNotFoundError = function(req,res) {

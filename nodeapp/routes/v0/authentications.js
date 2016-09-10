@@ -11,18 +11,22 @@ var errorHelper= require('../../lib/error-handler')
 
 router.route('/auth/login')
 .post(function(req, res){
-  verifyUserAndConfirmMailVerification(req,res,function(req,res,user) {
-    JwtHelper.comparePassword(req.body.password, user.password, function(err, isMatch) {
-      if (err) {
-        return res.status(401).send({message: "Authentication failed. Wrogn password"})
-      } if (isMatch) {
 
-        var result = {
-          token: Jwt.sign(user.tokenData,Environment.secret),
-        }
-        return res.json(result)
+  verifyUserAndConfirmMailVerification(req,res,function(user) {
+    authenticateUser(req,res,user)
+  })
+
+})
+
+router.route('/auth/adminLogin')
+.post(function(req, res){
+
+  verifyUserAndConfirmMailVerification(req,res,function(user) {
+      if (user.isAdmin) {
+        authenticateUser(req,res,user)
+      } else {
+        return res.status(401).send({message: "This login is not from a system admin"})
       }
-    })
   })
 
 })
@@ -52,7 +56,7 @@ router.route('/auth/verifyEmail/:token')
 
 router.route('/auth/resendVerificationEmailLink')
 .post(function(req,res){
-  verifyUserAndConfirmMailVerification(req,res, function(req,res,user) {
+  verifyUserAndConfirmMailVerification(req,res, function(user) {
     var token = Jwt.sign(user.tokenData,Environment.secret)
     Mailer.sentMailVerificationLink(user,token)
     return res.json({message:"account verification link is sucessfully send to your email id: " + user.email})
@@ -135,6 +139,7 @@ router.route('/auth/facebook')
 })
 
 function verifyUserAndConfirmMailVerification(req,res,callbackAfterVerification){
+
   User.findOne({ email: req.body.email }, function(err,user) {
     errorHelper.errorHandler(err,req,res)
 
@@ -145,10 +150,27 @@ function verifyUserAndConfirmMailVerification(req,res,callbackAfterVerification)
     if(!user.isEmailVerified) {
       return res.status(403).send({message: "Your email address is not verified. please verify your email address to proceed"})
     } else {
-      callbackAfterVerification(req,res,user)
+      callbackAfterVerification(user)
     }
   })
 
+}
+
+function authenticateUser(req,res,user) {
+
+  JwtHelper.comparePassword(req.body.password, user.password, function(err, isMatch) {
+    if (err) {
+      return res.status(401).send({message: "Authentication failed. Wrogn password"})
+    } if (isMatch) {
+
+      var result = {
+        token: Jwt.sign(user.tokenData,Environment.secret),
+        user: user
+      }
+
+      return res.json(result)
+    }
+  })
 }
 
 module.exports = router
