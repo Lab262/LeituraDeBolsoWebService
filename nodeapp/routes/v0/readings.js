@@ -1,6 +1,7 @@
 var Reading = require('../../models/v0/reading')
 var express = require('express')
 var router = express.Router()
+var errorHelper= require('../../lib/error-handler')
 
 router.route('/readings')
 
@@ -47,6 +48,7 @@ router.route('/readings/:id')
     Reading.remove({
       _id: req.params.id
     }, function(err) {
+      errorHelper.errorHandler(err,req,res)
       res.json({message: 'reading successufully deleted'})
     })
   })
