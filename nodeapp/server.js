@@ -4,18 +4,21 @@
 // =============================================================================================================================
 
 //call the needed packages
-const express    = require('express');
-const app        = express();
-const environment = require('./config/environment'); // get our config file
-const db = require('./config/db');
-const routesSetup = require('./config/routes');
-const jwtHelper = require('./lib/jwthelper');
+var express    = require('express');
+var app        = express();
+var environment = require('./config/environment'); // get our config file
+var db = require('./config/db');
+var routesSetup = require('./config/routes');
+var jwtHelper = require('./lib/jwthelper');
+var errorHelper = require('./lib/error-handler')
 
 app.set('superSecret', environment.secret); // secret variable
+app.use(errorHelper.errorHandler)
 
+//Block secret urls midlleware
 app.use(function(req, res, next){
 
-  const isUserPostRoute = ((req.path.indexOf('users') > -1 && req.method == 'POST')
+  var isUserPostRoute = ((req.path.indexOf('users') > -1 && req.method == 'POST')
   || req.path.indexOf('auth') > -1)
 
   if (!isUserPostRoute) {

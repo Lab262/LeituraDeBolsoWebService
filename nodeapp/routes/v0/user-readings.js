@@ -24,6 +24,9 @@ router.route('/users/:userId/readings')
         return res.status(403).send({message: "_readingId not corresponds to any reading"});
       }
         User.findOne({ _id: req.params.userId },function(err,user) {
+          if(!user)
+            errorHelper.entityNotFoundError(req,res)
+
           var userReading = user.readings.filter(function (reading) { return reading._readingId == req.body._readingId})
           if (userReading.length > 0) {
             return res.status(403).send({message: "_readingId is already in use for this user"})
@@ -56,9 +59,9 @@ router.route('/users/:userId/readings')
 router.route('/users/:userId/readings/:readingId')
   .get(function(req,res) {
     User.findOne({ _id: req.params.userId},function(err,user) {
-      if (user == null) {
-        return res.status(404).send({message: "user not found"});
-      }
+      if(!user)
+        errorHelper.entityNotFoundError(req,res)
+        
       var reading = user.readings.filter(function (reading) { return reading._readingId == req.params.readingId})
       return res.json(reading)
     })

@@ -1,10 +1,10 @@
 var User = require('../../models/v0/user');
 var express = require('express');
 var router = express.Router();
-const Environment = require('../../config/environment');
-const Jwt = require('jsonwebtoken');
-const Mailer = require('../../lib/mailer')
-const PasswordGenerator = require('password-generator');
+var Environment = require('../../config/environment');
+var Jwt = require('jsonwebtoken');
+var Mailer = require('../../lib/mailer')
+var PasswordGenerator = require('password-generator');
 
 router.route('/auth/login')
 
@@ -21,7 +21,6 @@ router.route('/auth/login')
     if(!user.isEmailVerified) {
       return res.status(403).send({message: "Your email address is not verified. please verify your email address to proceed"})
     }
-
 
     user.comparePassword(req.body.password, function(err, isMatch) {
       if (err) {

@@ -1,9 +1,10 @@
 var User = require('../../models/v0/user');
 var express = require('express');
 var router = express.Router();
-const Environment = require('../../config/environment');
-const Jwt = require('jsonwebtoken');
-const Mailer = require('../../lib/mailer')
+var Environment = require('../../config/environment');
+var Jwt = require('jsonwebtoken');
+var Mailer = require('../../lib/mailer')
+var errorHelper= require('../../lib/error-handler')
 
 router.route('/users')
 
@@ -49,8 +50,11 @@ router.route('/users/:id')
   User.findOne(
     {_id: req.params.id},
     function(err,user) {
+      if(!user)
+        errorHelper.entityNotFoundError(req,res)
+
       for(var param in req.body) {
-        user[param] = req.body[param];
+          user[param] = req.body[param];
       }
       user.save(function(err,user) {
         res.json({user: user,message: 'user successufully updated'})

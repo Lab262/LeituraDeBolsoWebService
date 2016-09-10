@@ -1,4 +1,4 @@
-const jwt = require('jsonwebtoken');
+var jwt = require('jsonwebtoken');
 
 
 exports.verifyJsonWebToken = function(req,res, next,app) {

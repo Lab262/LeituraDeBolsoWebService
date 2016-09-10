@@ -5,6 +5,8 @@
     "bcrypt": "^0.8.7",
     "body-parser": "~1.0.1",
     "express": "~4.0.0",
+    "jshint": "^2.9.3",
+    "jsinspect": "^0.8.0",
     "jsonwebtoken": "^7.1.9",
     "mocha": "~3.0.2",
     "mongoose": "~4.2.9",

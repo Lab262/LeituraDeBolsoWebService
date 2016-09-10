@@ -1,12 +1,12 @@
 
 exports.setupRoutesAndVersions = function(app) {
-  const ROUTES = {
+  var ROUTES = {
   'Readings':'/readings',
   'Users':'/users',
   'User-Readings':'/user-readings',
   'Authentications':'/authentications'};
 
-  const VERSIONS = {'Pre-Production': '/v0'};
+  var VERSIONS = {'Pre-Production': '/v0'};
 
   for (var versionIndex in VERSIONS) {
     for (var currentRouteIndex in ROUTES) {

@@ -21,6 +21,11 @@ var UserSchema = new Schema({
       required: false,
       default: false
     },
+    isAdmin: {
+      type: Boolean,
+      required: false,
+      default: false
+    },
     createdAt: {
       type: Date,
       required: false,

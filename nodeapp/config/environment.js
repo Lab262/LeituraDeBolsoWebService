@@ -6,7 +6,7 @@ module.exports = {
        username: "appstestsmail@gmail.com",
        password: "123321abc",
        accountName: "Leitura de bolso",
-       verifyEmailUrl: "api/v0/verifyEmail"
+       verifyEmailUrl: "api/v0/auth/verifyEmail"
      },
      server: {
            host: 'localhost',
