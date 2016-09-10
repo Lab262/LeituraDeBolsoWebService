@@ -14,5 +14,8 @@
     "nodemailer": "^0.7.1",
     "password-generator": "^2.0.2",
     "randomstring": "^1.1.5"
+  },
+  "devDependencies": {
+    "jshint-stylish": "^2.2.1"
   }
 }

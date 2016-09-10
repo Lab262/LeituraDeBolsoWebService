@@ -4,14 +4,19 @@ exports.setupRoutesAndVersions = function(app) {
   'Readings':'/readings',
   'Users':'/users',
   'User-Readings':'/user-readings',
-  'Authentications':'/authentications'};
+  'Authentications':'/authentications'}
 
-  var VERSIONS = {'Pre-Production': '/v0'};
+  var VERSIONS = {'Pre-Production': '/v0'}
 
   for (var versionIndex in VERSIONS) {
-    for (var currentRouteIndex in ROUTES) {
-      app.use('/api' + VERSIONS[versionIndex], require('../routes' + VERSIONS[versionIndex] + ROUTES[currentRouteIndex]));
+    if (VERSIONS.hasOwnProperty(versionIndex)) {
+      for (var currentRouteIndex in ROUTES) {
+        if (ROUTES.hasOwnProperty(currentRouteIndex)) {
+
+        app.use('/api' + VERSIONS[versionIndex], require('../routes' + VERSIONS[versionIndex] + ROUTES[currentRouteIndex]))
+      }
     }
   }
-};
+}
+} 
 //Router setup

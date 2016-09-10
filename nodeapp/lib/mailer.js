@@ -1,11 +1,8 @@
 var nodemailer = require("nodemailer"),
-    Config = require('../config/environment'),
-    bcrypt       = require('bcrypt')
-
-var privateKey = Config.secret
-
+    Config = require('../config/environment')
+    
 // create reusable transport method (opens pool of SMTP connections)
-// console.log(Config.email.username+"  "+Config.email.password);
+// console.log(Config.email.username+"  "+Config.email.password)
 var smtpTransport = nodemailer.createTransport("SMTP", {
     service: "Gmail",
     auth: {
@@ -23,17 +20,17 @@ exports.sentMailVerificationLink = function(user,token) {
 }
 
 exports.sentMailForgotPassword = function(user, newPassword) {
-    var from = Config.email.accountName+" Team<" + Config.email.username + ">";
-    var mailbody = "<p>Your "+Config.email.accountName+"  Account Credential</p><p>email : "+user.email+" , password : "+newPassword+"</p>";
-    mail(from, user.email , "Account new password", mailbody);
+    var from = Config.email.accountName+" Team<" + Config.email.username + ">"
+    var mailbody = "<p>Your "+Config.email.accountName+"  Account Credential</p><p>email : "+user.email+" , password : "+newPassword+"</p>"
+    mail(from, user.email , "Account new password", mailbody)
 
-};
+}
 
 // exports.sentMailForgotPassword = function(user) {
-//     var from = Config.email.accountName+" Team<" + Config.email.username + ">";
+//     var from = Config.email.accountName+" Team<" + Config.email.username + ">"
 //     var mailbody = "<p>Your "+Config.email.accountName+"  Account Credential</p><p>email : "+user.email+" , password : "+decrypt(user.password)+"</p>"
-//     mail(from, user.username , "Account password", mailbody);
-// };
+//     mail(from, user.username , "Account password", mailbody)
+// }
 
 
 function mail(from, email, subject, mailbody){
@@ -43,12 +40,12 @@ function mail(from, email, subject, mailbody){
         subject: subject, // Subject line
         //text: result.price, // plaintext body
         html: mailbody  // html body
-    };
+    }
 
-    smtpTransport.sendMail(mailOptions, function(error, response) {
+    smtpTransport.sendMail(mailOptions, function(error) {
         if (error) {
-            console.error(error);
+            console.error(error)
         }
-        smtpTransport.close(); // shut down the connection pool, no more messages
-    });
+        smtpTransport.close()  // shut down the connection pool, no more messages
+    })
 }

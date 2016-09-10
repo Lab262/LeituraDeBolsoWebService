@@ -1,10 +1,11 @@
-var User = require('../../models/v0/user');
-var express = require('express');
-var router = express.Router();
-var Environment = require('../../config/environment');
-var Jwt = require('jsonwebtoken');
+var User = require('../../models/v0/user')
+var express = require('express')
+var router = express.Router()
+var Environment = require('../../config/environment')
+var Jwt = require('jsonwebtoken')
 var Mailer = require('../../lib/mailer')
-var PasswordGenerator = require('password-generator');
+var PasswordGenerator = require('password-generator')
+var errorHelper= require('../../lib/error-handler')
 
 router.route('/auth/login')
 
@@ -34,32 +35,33 @@ router.route('/auth/login')
         var result = {
           token: Jwt.sign(tokenData,Environment.secret),
         }
-        return res.json(result);
+        return res.json(result)
       }
     })
   })
-});
+})
 
 router.route('/auth/verifyEmail/:token')
 .get(function(req,res){
 
   Jwt.verify(req.params.token, Environment.secret, function(err, decoded) {
     if(decoded === undefined){
-      return res.status(403).send({message: "invalid verification link"});
+      return res.status(403).send({message: "invalid verification link"})
     }
 
     User.findOne({ _id: decoded.id, email: decoded.email}, function(err, user){
       if (user === null){
-        return res.status(403).send({message: "invalid verification link"});
+        return res.status(403).send({message: "invalid verification link"})
       }
       if (user.isEmailVerified === true){
-        return res.status(403).send({message: "Account is already verified"});
+        return res.status(403).send({message: "Account is already verified"})
       }
-      user.isEmailVerified = true;
+      user.isEmailVerified = true
 
       user.save(function(err) {
-        return res.json({message:"account sucessfully verified"});
-      });
+        errorHelper.errorHandler(err,req,res)
+        return res.json({message:"account sucessfully verified"})
+      })
 
     })
   })
@@ -73,11 +75,11 @@ router.route('/auth/resendVerificationEmailLink')
   User.findOne({ email: req.body.email}, function(err, user) {
     if (!err) {
       if (user === null) {
-        return res.status(403).send({message: "Invalid email or password"});
+        return res.status(403).send({message: "Invalid email or password"})
       }
 
       user.comparePassword(req.body.password, function(err, isMatch) {
-        if (err) {
+        if (err || !isMatch) {
           return res.status(401).send({message: "Authentication failed. Wrong password"})
         }
 
@@ -91,61 +93,62 @@ router.route('/auth/resendVerificationEmailLink')
           }
 
           var token = Jwt.sign(tokenData,Environment.secret)
-          Mailer.sentMailVerificationLink(user,token);
-          return res.json({message:"account verification link is sucessfully send to your email id: " + user.email});
+          Mailer.sentMailVerificationLink(user,token)
+          return res.json({message:"account verification link is sucessfully send to your email id: " + user.email})
         }
-      });
+      })
     }
-  });
+  })
 })
 
 router.route('/auth/forgotPassword')
 .post(function(req,res) {
-  var random = PasswordGenerator(12, false);
+  var random = PasswordGenerator(12, false)
 
   User.findOne({ email: req.body.email }, function(err, user){
     if (!err) {
       if (user === null){
-        return res.status(403).send({message:"This email has not been registered"});
+        return res.status(403).send({message:"This email has not been registered"})
       }
-      if (user.isEmailVerified == false ) {
+      if (user.isEmailVerified === false ) {
 
         var tokenData = {
           email: user.email,
           id: user._id
         }
         var token = Jwt.sign(tokenData,Environment.secret)
-        Mailer.sentMailVerificationLink(user,token);
+        Mailer.sentMailVerificationLink(user,token)
 
         return res.status(403).send({message:"Your email address is not verified. please verify your email address to proceed"})
       } else {
-        user.password = random;
+        user.password = random
         user.save(function(err,user) {
           Mailer.sentMailForgotPassword(user, random)
-          return res.json({message: "password is send to your registered email id: " + req.body.email});
+          return res.json({message: "password is send to your registered email id: " + req.body.email})
         })
       }
     }
-  });
+  })
 
 })
 
 router.route('/auth/facebook')
 .post(function(req,res) {
-  if (req.body.facebook == null || req.body.facebook.password == null || req.body.facebook.password.indexOf(Environment.facebook.passwordSecret) < 0) {
+  if (req.body.facebook === null || req.body.facebook.password === null || req.body.facebook.password.indexOf(Environment.facebook.passwordSecret) < 0) {
     return res.status(403).send({message: "Invalid facebook password format"})
   }
 
   User.findOne({ email : req.body.email }, function(err,user) {
     //CREATE USER AND LOGIN
 
-    if (user == null) {
+    if (user === null) {
       return res.json("USUARIO NAO EXISTE")
 
       var newUser = new User(req.body)
       newUser.isEmailVerified = true
       newUser.password = req.body.facebook.password
       newUser.save(function(err) {
+        errorHelper.errorHandler(err,req,res)
         var tokenData = {
           email: newUser.email,
           id: newUser._id
@@ -153,12 +156,13 @@ router.route('/auth/facebook')
 
         var token = Jwt.sign(tokenData,Environment.secret)
 
-        return res.json({message: 'successufully create account throught facebook with email:' + newUser.email , user: newUser, token: token});
+        return res.json({message: 'successufully create account throught facebook with email:' + newUser.email , user: newUser, token: token})
       })
-    }else if (user.facebook == null || user.facebook.id == null) {
+    }else if (user.facebook === null || user.facebook.id === null) {
       user.facebook.id = req.body.facebook.id
       user.facebook.password = req.body.facebook.password
       user.save(function(err) {
+        errorHelper.errorHandler(err,req,res)
         var tokenData = {
           email: user.email,
           id: user._id
@@ -166,7 +170,7 @@ router.route('/auth/facebook')
 
         var token = Jwt.sign(tokenData,Environment.secret)
 
-        return res.json({message: 'successufully associate account throught facebook with email:' + user.email , user: newUser, token: token});
+        return res.json({message: 'successufully associate account throught facebook with email:' + user.email , user: newUser, token: token})
       })
     } else {
 
@@ -180,7 +184,7 @@ router.route('/auth/facebook')
                     id: user._id
                   }
                            var token = Jwt.sign(tokenData,Environment.secret)
-                       return res.json({message: 'successufully logged throught facebook with email:' + user.email , user: user, token: token});
+                       return res.json({message: 'successufully logged throught facebook with email:' + user.email , user: user, token: token})
                 }
               })
     }
@@ -190,4 +194,4 @@ router.route('/auth/facebook')
 
 
 
-module.exports = router;
+module.exports = router
