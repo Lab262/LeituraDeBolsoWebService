@@ -1,15 +1,14 @@
 {
+  "name": "node-api",
+  "main": "server.js",
   "engines": {
     "node": "5.10.0",
     "npm": "2.14.21"
   },
-  "name": "node-api",
-  "main": "server.js",
   "scripts": {
-    "start": "node server.js",
     "test": "npm run test-unit",
     "test-unit": "istanbul cover _mocha test -- -R spec",
-  }
+  },
   "dependencies": {
     "bcrypt": "^0.8.7",
     "body-parser": "~1.0.1",
