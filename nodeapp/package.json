@@ -2,8 +2,8 @@
   "name": "node-api",
   "main": "server.js",
   "scripts": {
-    "test": "npm run test-unit && npm run coverage",
-    "test-unit": "NODE_ENV=test mocha --require co-mocha  $(find . -name \"*.spec.js\" -not -path \"./node_modules/*\")",
+    "test": "npm run test-unit",
+    "test-unit": "istanbul cover _mocha test -- -R spec",
     "coverage": "istanbul cover _mocha ."
   },
   "dependencies": {
