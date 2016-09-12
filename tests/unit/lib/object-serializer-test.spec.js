@@ -11,7 +11,6 @@ describe('ObjectSerializer', function() {
         var user = new User()
         var jsonObj = { name: "Thiago", email: "tmb0710@gmail.com", password: "12345", uknownProperty: "none"}
         user = ObjectSerializer.deserializerJSONIntoObject(user,jsonObj)
-        this.timeout(10000)
         user.save(function(err){
           expect(user.name).to.equal(jsonObj['name'])
           expect(user.email).to.equal(jsonObj['email'])
