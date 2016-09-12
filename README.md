@@ -1,0 +1,2 @@
+[![build status](https://gitlab.com/LAB262/LeituraDeBolsoWebService/badges/master/build.svg)](https://gitlab.com/LAB262/LeituraDeBolsoWebService/commits/master)
+[![coverage report](https://gitlab.com/LAB262/LeituraDeBolsoWebService/badges/master/coverage.svg)](https://gitlab.com/LAB262/LeituraDeBolsoWebService/commits/master)
