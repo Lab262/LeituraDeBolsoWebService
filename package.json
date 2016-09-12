@@ -7,7 +7,7 @@
   },
   "scripts": {
     "test": "npm run test-unit",
-    "test-unit": "_mocha test"
+    "test-unit": "istanbul cover _mocha test -- -R spec"
   },
   "dependencies": {
     "bcrypt": "^0.8.7",
