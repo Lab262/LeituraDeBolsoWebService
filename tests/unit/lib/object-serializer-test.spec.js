@@ -1,7 +1,7 @@
 var chai = require('chai')
 var expect = chai.expect // we are using the "expect" style of Chai
 var ObjectSerializer = require('./../../../lib/object-serializer')
-var User = require('./../../../models/v0/User')
+var User = require('./../../../models/v0/user')
 var sinon = require('sinon')
 var mongooseTestSetup = require('./../../setup/mongoose-test-setup')
 
