@@ -7,8 +7,8 @@ module.exports = {
       test: "mongodb://developers:Ufu-2Ss-W95-Az3@ds147985.mlab.com:47985/leituradebolso"
     },
       email: {
-       username: "appstestsmail@gmail.com",
-       password: "123321abc",
+       username: "leituradebolsoapp@gmail.com",
+       password: "leitura123",
        accountName: "Leitura de bolso",
        verifyEmailUrl: "api/v0/auth/verifyEmail"
      },
