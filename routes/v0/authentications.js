@@ -66,10 +66,9 @@ router.route('/auth/resendVerificationEmailLink')
 
     var token = Jwt.sign(user.tokenData,Environment.secret)
     Mailer.sentMailVerificationLink(user,token)
-    
+
     return res.json({message:"account verification link is sucessfully send to your email id: " + user.email})
   });
-
 
 })
 
