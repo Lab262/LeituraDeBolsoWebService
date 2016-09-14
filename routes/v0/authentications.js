@@ -56,11 +56,21 @@ router.route('/auth/verifyEmail/:token')
 
 router.route('/auth/resendVerificationEmailLink')
 .post(function(req,res){
-  verifyUserAndConfirmMailVerification(req,res, function(user) {
+
+  User.findOne({ email: req.body.email }, function(err,user) {
+    errorHelper.errorHandler(err,req,res)
+
+    if(!user){
+      return res.status(401).send({message: "Authentication failed. User not found"})
+    }
+
     var token = Jwt.sign(user.tokenData,Environment.secret)
     Mailer.sentMailVerificationLink(user,token)
+    
     return res.json({message:"account verification link is sucessfully send to your email id: " + user.email})
-  })
+  });
+
+
 })
 
 router.route('/auth/forgotPassword')
