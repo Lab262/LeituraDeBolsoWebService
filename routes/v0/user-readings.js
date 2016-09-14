@@ -40,7 +40,7 @@ router.route('/users/:userId/readings')
                 $each: [req.body]}
               }},
               {upsert:true},
-              mongooseCallbacks.callbackWithMessage(res,"user-reading successfully added")
+              mongooseCallbacks.callbackWithMessage(res,req,"user-reading successfully added")
             )
           })
         })
@@ -54,7 +54,7 @@ router.route('/users/:userId/readings')
           []
          }
        },
-       mongooseCallbacks.callbackWithMessage(res,"user-readings successufully deleted")
+       mongooseCallbacks.callbackWithMessage(res,req,"user-readings successufully deleted")
      )
   })
 
@@ -77,7 +77,7 @@ router.route('/users/:userId/readings/:readingId')
       { _id: req.params.userId,
         'readings._readingId': req.params.readingId},
         updateObj,
-        mongooseCallbacks.callbackWithMessage(res,"user-reading successufully updated")
+        mongooseCallbacks.callbackWithMessage(res,req,"user-reading successufully updated")
     )
   })
 
@@ -89,7 +89,7 @@ router.route('/users/:userId/readings/:readingId')
            {_readingId: req.params.readingId}
          }
        },
-       mongooseCallbacks.callbackWithMessage(res,"user-reading successufully deleted")
+       mongooseCallbacks.callbackWithMessage(res,req,"user-reading successufully deleted")
     )
   })
 

@@ -48,7 +48,7 @@ router.route('/auth/verifyEmail/:token')
       }
       user.isEmailVerified = true
 
-      user.save(mongooseCallbacks.callbackWithMessage("account sucessfully verified"))
+      user.save(mongooseCallbacks.callbackWithMessage(res,req,"account sucessfully verified"))
 
     })
   })
@@ -150,6 +150,7 @@ router.route('/auth/facebook')
 function verifyUserAndConfirmMailVerification(req,res,callbackAfterVerification){
 
   User.findOne({ email: req.body.email }, function(err,user) {
+
     errorHelper.errorHandler(err,req,res)
 
     if(!user){

@@ -76,7 +76,7 @@ router.route('/users/:id')
     User.remove({
       _id: req.params.id
     },
-    mongooseCallbacks.callbackWithMessage(res,"user successufully deleted")
+    mongooseCallbacks.callbackWithMessage(res,req,"user successufully deleted")
     )
   })
 
