@@ -13,7 +13,7 @@ module.exports = {
        verifyEmailUrl: "api/v0/auth/verifyEmail"
      },
      server: {
-           protocol: "https://",
+           protocol: "http://",
            host: "leituradebolso.herokuapp.com",
            port: 8080
    },
