@@ -13,7 +13,8 @@ module.exports = {
        verifyEmailUrl: "api/v0/auth/verifyEmail"
      },
      server: {
-           host: 'localhost',
+           protocol: "https://",
+           host: "leituradebolso.herokuapp.com",
            port: 8080
    },
    facebook: {

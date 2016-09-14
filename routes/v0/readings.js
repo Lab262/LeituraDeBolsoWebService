@@ -14,7 +14,7 @@ router.route('/readings')
 
 .post(function(req,res) {
   var reading = new Reading(req.body)
-  reading.save(mongooseCallbacks.callbackWithMessage("reading successufully added"))
+  reading.save(mongooseCallbacks.callbackWithMessage(res,"reading successufully added"))
 })
 
 router.route('/readings/:id')
@@ -43,7 +43,7 @@ router.route('/readings/:id')
     Reading.remove({
       _id: req.params.id
     },
-    mongooseCallbacks.callbackWithMessage("reading successufully deleted")
+    mongooseCallbacks.callbackWithMessage(res,"reading successufully deleted")
   )
 })
 
