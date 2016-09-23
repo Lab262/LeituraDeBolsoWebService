@@ -14,8 +14,10 @@ production:
   script:
   - apt-get update -qy
   - apt-get install -y rubygems
+  - rvm pkg install openssl
+  - rvm reinstall ruby-2.0.0-p0 --with-gcc=gcc-4.7 --with-openssl-dir=$rvm_path/usr
   - gem install dpl
   - dpl --provider=heroku --app=leituradebolso --api-key=$HEROKU_PRODUCTION_API_KEY
-  
+
   only:
   - master

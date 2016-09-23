@@ -25,7 +25,7 @@ router.route('/auth/adminLogin')
       if (user.isAdmin) {
         authenticateUser(req,res,user)
       } else {
-        return res.status(401).send({message: "This login is not from a system admin"})
+        return res.status(422).send({message: "This login is not from a system admin"})
       }
   })
 
@@ -61,7 +61,7 @@ router.route('/auth/resendVerificationEmailLink')
     errorHelper.errorHandler(err,req,res)
 
     if(!user){
-      return res.status(401).send({message: "Authentication failed. User not found"})
+      return res.status(404).send({message: "Authentication failed. User not found"})
     }
 
     var token = Jwt.sign(user.tokenData,Environment.secret)
@@ -134,7 +134,7 @@ router.route('/auth/facebook')
 
       JwtHelper.comparePassword(req.body.facebook.password, user.facebook.password, function(err, isMatch) {
         if (err) {
-          return res.status(401).send({message: "Authentication failed. Wrogn password"})
+          return res.status(422).send({message: "Authentication failed. Wrogn password"})
         }
         if (isMatch) {
 
@@ -153,7 +153,7 @@ function verifyUserAndConfirmMailVerification(req,res,callbackAfterVerification)
     errorHelper.errorHandler(err,req,res)
 
     if(!user){
-      return res.status(401).send({message: "Authentication failed. User not found"})
+      return res.status(422).send({message: "Authentication failed. User not found"})
     }
 
     if(!user.isEmailVerified) {
@@ -171,7 +171,7 @@ function authenticateUser(req,res,user) {
     console.log(isMatch)
 
     if (err) {
-      return res.status(401).send({message: "Authentication failed. Wrogn password"})
+      return res.status(422).send({message: "Authentication failed. Wrogn password"})
     } if (isMatch) {
 
       var result = {
