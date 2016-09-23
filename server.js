@@ -18,6 +18,9 @@ app.set('superSecret', environment.secret)  // secret variable
 //Block secret urls midlleware
 app.use(function(req, res, next){
 
+  // Website you wish to allow to connect
+res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
+
   var isUserPostRoute = ((req.path.indexOf('users') > -1 && req.method === 'POST') || req.path.indexOf('auth') > -1)
 
   if (!isUserPostRoute) {
@@ -39,6 +42,7 @@ app.use(morgan('dev'))
 routesSetup.setupRoutesAndVersions(app)
 
 app.use(function (err, req, res, next) {
+
     if(err) {
         res.send(err.message)
     }

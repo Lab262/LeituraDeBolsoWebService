@@ -150,7 +150,6 @@ router.route('/auth/facebook')
 function verifyUserAndConfirmMailVerification(req,res,callbackAfterVerification){
 
   User.findOne({ email: req.body.email }, function(err,user) {
-
     errorHelper.errorHandler(err,req,res)
 
     if(!user){
@@ -169,6 +168,8 @@ function verifyUserAndConfirmMailVerification(req,res,callbackAfterVerification)
 function authenticateUser(req,res,user) {
 
   JwtHelper.comparePassword(req.body.password, user.password, function(err, isMatch) {
+    console.log(isMatch)
+
     if (err) {
       return res.status(401).send({message: "Authentication failed. Wrogn password"})
     } if (isMatch) {
@@ -179,6 +180,8 @@ function authenticateUser(req,res,user) {
       }
 
       return res.json(result)
+    } else {
+      return res.status(422).send({message: "Authentication failed. Wrogn password"})
     }
   })
 }
