@@ -19,7 +19,7 @@ app.set('superSecret', environment.secret)  // secret variable
 app.use(function(req, res, next){
 
   // Website you wish to allow to connect
-res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
+  res.setHeader('Access-Control-Allow-Origin', '*');
 
   var isUserPostRoute = ((req.path.indexOf('users') > -1 && req.method === 'POST') || req.path.indexOf('auth') > -1)
 
