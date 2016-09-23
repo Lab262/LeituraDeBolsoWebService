@@ -1,7 +1,7 @@
 image: node:5.10.0
 
 before_script:
-  - apt-get -qqupdate
+  - apt-get -qq update
   - apt-get -qq install -y python2.7 python2.7-dev build-essential make gcc g++ libicu-dev
 
 cache:
