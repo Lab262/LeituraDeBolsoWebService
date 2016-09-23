@@ -1,4 +1,8 @@
-image: node:5.10.0
+image: node:5.10.0:argon
+
+before_script:
+  - apt-get -qqupdate
+  - apt-get -qq install -y python2.7 python2.7-dev build-essential make gcc g++ libicu-dev
 
 cache:
   paths:
@@ -12,11 +16,7 @@ all_tests:
 production:
   type: deploy
   script:
-  - apt-get update
-  - apt-get update -yq
-  - apt-get install -y ruby-dev
-  - apt-get install aptitude
-  - aptitude install libgemplugin-ruby
+  - apt-get install -yqq ruby ruby-dev
   - gem install dpl
   - dpl --provider=heroku --app=leituradebolso --api-key=$HEROKU_PRODUCTION_API_KEY
 
