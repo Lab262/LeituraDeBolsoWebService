@@ -15,7 +15,8 @@ production:
   - apt-get update
   - apt-get update -yq
   - apt-get install -y ruby-dev
-  - apt-get install rubygems
+  - apt-get install aptitude
+  - aptitude install libgemplugin-ruby
   - gem install dpl
   - dpl --provider=heroku --app=leituradebolso --api-key=$HEROKU_PRODUCTION_API_KEY
 
