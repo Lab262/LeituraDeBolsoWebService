@@ -2,7 +2,6 @@ image: node:5.10.0
 
 before_script:
   - apt-get -qq update
-  - apt-get -qq install -y python2.7 python2.7-dev build-essential make gcc g++ libicu-dev
 
 cache:
   paths:
@@ -16,7 +15,7 @@ all_tests:
 production:
   type: deploy
   script:
-  - apt-get install -yqq ruby ruby-dev
+  - apt-get install git ruby ruby-dev libcurl4-openssl-dev make
   - gem install dpl
   - dpl --provider=heroku --app=leituradebolso --api-key=$HEROKU_PRODUCTION_API_KEY
 
