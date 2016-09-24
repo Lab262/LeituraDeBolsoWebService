@@ -15,7 +15,9 @@ all_tests:
 production:
   type: deploy
   script:
-  - echo "Y" | apt-get install git ruby ruby-dev libcurl4-openssl-dev make
+  - echo "Y" | apt-get install ruby ruby-dev
+  - echo "Y" | apt-get install ruby-dev
+  - echo "Y" | libcurl4-openssl-dev make
   - gem install dpl
   - dpl --provider=heroku --app=leituradebolso --api-key=$HEROKU_PRODUCTION_API_KEY
 
