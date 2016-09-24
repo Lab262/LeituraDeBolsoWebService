@@ -26,7 +26,7 @@ function serverProtocolAndHost() {
           host: "leituradebolso.herokuapp.com",
         }
       case 'test':
-        return "mongodb://developers:Ufu-2Ss-W95-Az3@ds021356.mlab.com:21356/leituradebolso-localtest"
+        return "localhost:8080"
       default :
         return ''
   }
