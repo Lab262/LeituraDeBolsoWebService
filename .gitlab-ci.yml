@@ -1,7 +1,11 @@
-image: node:5.10.0
+image: ruby:2.2
 
 before_script:
   - apt-get -qq update
+  - curl -sL https://deb.nodesource.com/setup_5.10.0 | sudo -E bash -
+  - sudo apt-get install -y nodejs
+  - sudo apt-get update
+
 
 cache:
   paths:
@@ -15,12 +19,6 @@ all_tests:
 production:
   type: deploy
   script:
-    - wget http://production.cf.rubygems.org/rubygems/rubygems-2.6.6.tgz
-    - tar xvf rubygems*
-    - cd rubygems-2.6.6
-    - apt-get update -qy
-    - apt-get install -y ruby-full
-    - ruby setup.rb
     - gem install dpl
     - dpl --provider=heroku --app=leituradebolso --api-key=$HEROKU_PRODUCTION_API_KEY
 
