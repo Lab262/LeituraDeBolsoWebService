@@ -1,10 +1,44 @@
+
+function databaseHost() {
+  switch (process.env.NODE_ENV) {
+      case 'development':
+        return  "mongodb://developers:Ufu-2Ss-W95-Az3@ds021356.mlab.com:21356/leituradebolso-localtest"
+      case 'production':
+        return "mongodb://developers:Ufu-2Ss-W95-Az3@ds147985.mlab.com:47985/leituradebolso"
+      case 'test':
+        return "mongodb://developers:Ufu-2Ss-W95-Az3@ds021356.mlab.com:21356/leituradebolso-localtest"
+      default :
+        return ''
+  }
+  return process.env.NODE_ENV
+}
+
+function serverProtocolAndHost() {
+  switch (process.env.NODE_ENV) {
+      case 'development':
+        return {
+          protocol: "http://",
+          host: "localhost:8080",
+        }
+      case 'production':
+        return  {
+          protocol: "http://",
+          host: "leituradebolso.herokuapp.com",
+        }
+      case 'test':
+        return "mongodb://developers:Ufu-2Ss-W95-Az3@ds021356.mlab.com:21356/leituradebolso-localtest"
+      default :
+        return ''
+  }
+  return process.env.NODE_ENV
+}
+
 module.exports = {
 
     'secret': ',9@4gk8+nYw,3EL2{Law7vzFZE46Ni&An=(88bY/Rpno$vnLbY',
     database: {
-      production: "mongodb://developers:Ufu-2Ss-W95-Az3@ds147985.mlab.com:47985/leituradebolso",
-      development: "mongodb://developers:Ufu-2Ss-W95-Az3@ds147985.mlab.com:47985/leituradebolso",
-      test: "mongodb://developers:Ufu-2Ss-W95-Az3@ds147985.mlab.com:47985/leituradebolso"
+      host: databaseHost()
+
     },
       email: {
        username: "leituradebolsoapp@gmail.com",
@@ -12,11 +46,7 @@ module.exports = {
        accountName: "Leitura de bolso",
        verifyEmailUrl: "api/v0/auth/verifyEmail"
      },
-     server: {
-           protocol: "http://",
-           host: "leituradebolso.herokuapp.com",
-           port: 8080
-   },
+     server: serverProtocolAndHost(),
    facebook: {
      passwordSecret: "A QWgd$j[QGe]Bh.Ugkf>?B3y696?2$#B2xwfN3hrVhFrE348g"
    }

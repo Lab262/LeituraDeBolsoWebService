@@ -4,12 +4,17 @@
 // =============================================================================================================================
 
 //call the needed packages
+
+
 var express    = require('express')
 var app        = express()
+process.env.NODE_ENV = app.get('env') //set node env
+
 var environment = require('./config/environment')  // get our config file
 var db = require('./config/db')
 var routesSetup = require('./config/routes')
 var jwtHelper = require('./lib/jwthelper')
+
 
 db.setupDatabase()
 

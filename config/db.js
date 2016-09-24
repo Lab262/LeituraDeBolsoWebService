@@ -5,11 +5,11 @@ function setupDatabase(){  var mongoose   = require('mongoose')
                 replset: { socketOptions: { keepAlive: 300000, connectTimeoutMS : 30000 } } }
 
 // var mongodbUri = 'mongodb://developers:Ufu-2Ss-W95-Az3@ds147985.mlab.com:47985/leituradebolso'
-  mongoose.connect(environment.database.development, options)
+  mongoose.connect(environment.database.host, options)
   var db = mongoose.connection
   db.on('error', console.error.bind(console, 'connection error:'))
   db.once('open', function() {
-  console.log('Mongolab database connected')
+  console.log('Mongolab database connected in ' + environment.database.host)
   })
 }
 
