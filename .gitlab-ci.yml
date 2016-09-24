@@ -2,7 +2,7 @@ image: ruby:2.2
 
 before_script:
   - apt-get -qq update
-  - curl -sL https://deb.nodesource.com/setup_5.10.0 | sudo -E bash -
+  - curl -sL https://deb.nodesource.com/setup_5.10.0 | -E bash -
   - apt-get install -y nodejs
   - apt-get update
 
