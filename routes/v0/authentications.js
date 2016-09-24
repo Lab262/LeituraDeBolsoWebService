@@ -171,7 +171,7 @@ function authenticateUser(req,res,user) {
     console.log(isMatch)
 
     if (err) {
-      return res.status(422).send({message: "Authentication failed. Wrogn password"})
+      return res.status(422).send({message: "Authentication failed. wrong password"})
     } if (isMatch) {
 
       var result = {

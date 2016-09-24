@@ -7,6 +7,7 @@
 
 
 var express    = require('express')
+var cors = require('cors')
 var app        = express()
 process.env.NODE_ENV = app.get('env') //set node env
 
@@ -15,6 +16,7 @@ var db = require('./config/db')
 var routesSetup = require('./config/routes')
 var jwtHelper = require('./lib/jwthelper')
 
+app.use(cors());
 
 db.setupDatabase()
 
