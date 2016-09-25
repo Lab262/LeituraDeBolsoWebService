@@ -13,7 +13,9 @@ router.route('/users/:userId/readings')
       if (user === null) {
         return res.status(404).send({message: "user not found"})
       }
-        res.json(user)
+      var serialized = objectSerializer.serializeObjectIntoJSONAPI(user)
+
+        res.json(serialized)
     }
     User.findOne({ _id: req.params.userId}).select('readings').exec(callback)
   })
@@ -65,7 +67,10 @@ router.route('/users/:userId/readings/:readingId')
         errorHelper.entityNotFoundError(req,res)
       }
       var reading = user.readings.filter(function (reading) { return reading._readingId === req.params.readingId})
-      return res.json(reading)
+
+      var serialized = objectSerializer.serializeObjectIntoJSONAPI(reading)
+
+      return res.json(serialized)
     })
   })
 

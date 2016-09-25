@@ -12,7 +12,8 @@ router.route('/users')
 
 .get(function(req,res) {
   User.find(function(err,users) {
-    res.json(users)
+    var serialized = objectSerializer.serializeObjectIntoJSONAPI(users)
+    res.json(serialized)
   })
 })
 
@@ -40,7 +41,10 @@ router.route('/users')
          var token = Jwt.sign(tokenData,Environment.secret)
 
          Mailer.sentMailVerificationLink(newUser,token)
-         res.send({message: 'Please confirm your email id by clicking on link in your email:' + newUser.email , user: newUser, token: token})
+
+         var serialized = objectSerializer.serializeObjectIntoJSONAPI(newUser)
+
+         res.send({message: 'Please confirm your email id by clicking on link in your email:' + newUser.email , user: serialized, token: token})
      })
   })
 })
@@ -60,7 +64,8 @@ router.route('/users/:id')
       var user =  objectSerializer.deserializerJSONIntoObject(user,req.body)
 
       user.save(function(err,user) {
-        res.json({user: user,message: 'user successufully updated'})
+
+        res.json({message: 'user successufully updated'})
       })
     })
   })
@@ -68,7 +73,9 @@ router.route('/users/:id')
   .get(function(req,res) {
     User.findOne({ _id: req.params.id},function(err,user) {
       errorHelper.errorHandler(err,req,res)
-      res.json(user)
+      var serialized = objectSerializer.serializeObjectIntoJSONAPI(user)
+
+      res.json(serialized)
     })
   })
 
