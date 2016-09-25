@@ -11,7 +11,11 @@ var objectSerializer = require('../../lib/object-serializer')
 router.route('/users')
 
 .get(function(req,res) {
-  User.find(function(err,users) {
+
+  var token = req.headers['x-access-token']
+  var decodedUser = Jwt.decode(token);
+  User.findOne({ _id: decodedUser.id},function(err,users) {
+
     var serialized = objectSerializer.serializeObjectIntoJSONAPI(users)
     res.json(serialized)
   })
