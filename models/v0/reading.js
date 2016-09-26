@@ -19,10 +19,9 @@ var ReadingSchema   = new Schema({
       required: false,
       default: false
     },
-    timeToReadInSeconds: {
+    timeToReadInMinutes: {
       type: Number,
-      required: true,
-      default: 60
+      required: [true, 'required time to read is missing']
     },
     publishDate: {
       type: Date,
