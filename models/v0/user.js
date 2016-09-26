@@ -62,8 +62,7 @@ var UserSchema = new Schema({
           type: String,
           ref: 'Reading',
           required: [true, 'required readingId is missing']
-        },
-        emojis: [String]
+        }
     }
   ]
 })
