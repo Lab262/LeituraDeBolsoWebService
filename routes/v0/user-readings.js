@@ -29,7 +29,7 @@ router.route('/users/:userId/readings')
         return res.status(403).send({message: "_readingId not corresponds to any reading"})
       }
         User.findOne({ _id: req.params.userId },function(err,user) {
-          if(!user || user.readings == null) {
+          if(!user || user.readings === null) {
             errorHelper.entityNotFoundError(req,res)
           }
           var userReading = user.readings.filter(function (reading) { return reading._readingId === req.body._readingId})
