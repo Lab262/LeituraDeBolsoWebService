@@ -16,6 +16,19 @@ var db = require('./config/db')
 var routesSetup = require('./config/routes')
 var jwtHelper = require('./lib/jwthelper')
 
+//Configure app to user bodyParse()
+//this will let use get the data from a post
+var bodyParser = require('body-parser')
+// app.use(bodyParser.urlencoded({extended: true}))
+app.use(bodyParser.json())
+app.use(bodyParser.json({type: 'application/vnd.api+json'}))
+// parse various different custom JSON types as JSON
+app.use(bodyParser.json({ type: 'application/*+json' }))
+
+// parse some custom thing into a Buffer
+app.use(bodyParser.raw({ type: 'application/vnd.api+json' }))
+
+
 app.use(cors());
 
 db.setupDatabase()
@@ -36,12 +49,6 @@ app.use(function(req, res, next){
   next()
 })
 
-//Configure app to user bodyParse()
-//this will let use get the data from a post
-var bodyParser = require('body-parser')
-app.use(bodyParser.urlencoded({extended: true}))
-app.use(bodyParser.json())
-
 
 var morgan      = require('morgan')
 app.use(morgan('dev'))
@@ -51,7 +58,7 @@ routesSetup.setupRoutesAndVersions(app)
 app.use(function (err, req, res, next) {
 
     if(err) {
-        res.send(err.message)
+        return res.send(err.message)
     }
     next()
 })

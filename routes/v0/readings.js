@@ -15,23 +15,40 @@ router.route('/readings')
 })
 
 .post(function(req,res) {
-  var reading = new Reading(req.body)
-  reading.save(mongooseCallbacks.callbackWithMessage(res,req,"reading successufully added"))
+
+  var callBack = function(deserialized) {
+    console.log(deserialized)
+    var reading = new Reading(deserialized)
+    reading.save(mongooseCallbacks.callbackWithMessage(res,req,"reading successufully added"))
+  }
+
+  objectSerializer.deserializeJSONAPIDataIntoObject(req.body,callBack)
+
 })
 
 router.route('/readings/:id')
 
 .put(function(req,res) {
 
-  var updateObj = objectSerializer.deserializerJSONAndCreateAUpdateClosure('',req.body)
+  var callBack = function(deserialized) {
+    console.log(deserialized)
 
-  Reading.update(
-    {_id: req.params.id},
-    updateObj,
-    function(err,reading) {
-      errorHelper.errorHandler(err,req,res)
-      return res.json({message: 'reading successufully updated'})
-    })
+    var updateObj = objectSerializer.deserializerJSONAndCreateAUpdateClosure('',deserialized)
+
+    console.log(updateObj)
+    Reading.update(
+      {_id: req.params.id},
+      updateObj,
+      function(err,reading) {
+        errorHelper.errorHandler(err,req,res)
+        return res.json({message: 'reading successufully updated'})
+      })
+
+  }
+
+  objectSerializer.deserializeJSONAPIDataIntoObject(req.body,callBack)
+
+
   })
 
   .get(function(req,res) {

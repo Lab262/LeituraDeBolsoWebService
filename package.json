@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "bcrypt": "^0.8.7",
-    "body-parser": "~1.0.1",
+    "body-parser": "1.15.2",
     "cors": "^2.8.1",
     "express": "~4.0.0",
     "jsonapi-serializer": "^3.4.0",
