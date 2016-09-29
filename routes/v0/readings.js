@@ -17,9 +17,11 @@ router.route('/readings')
 .post(function(req,res) {
 
   var callBack = function(deserialized) {
-    console.log(deserialized)
     var reading = new Reading(deserialized)
-    reading.save(mongooseCallbacks.callbackWithMessage(res,req,"reading successufully added"))
+    reading.save( function(err, reading, numAffected) {
+      res.status(201).json(objectSerializer.serializeObjectIntoJSONAPI(reading))
+
+    })
   }
 
   objectSerializer.deserializeJSONAPIDataIntoObject(req.body,callBack)
@@ -28,7 +30,7 @@ router.route('/readings')
 
 router.route('/readings/:id')
 
-.put(function(req,res) {
+.patch(function(req,res) {
 
   var callBack = function(deserialized) {
     console.log(deserialized)

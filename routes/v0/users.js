@@ -61,7 +61,7 @@ router.route('/users')
 
 router.route('/users/:id')
 
-.put(function(req,res) {
+.patch(function(req,res) {
 
   var callBack = function(deserialized) {
     User.findOne(

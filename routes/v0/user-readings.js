@@ -86,7 +86,7 @@ router.route('/users/:userId/readings/:readingId')
     })
   })
 
-  .put(function(req,res) {
+  .patch(function(req,res) {
 
     var callBack = function(deserialized) {
 
