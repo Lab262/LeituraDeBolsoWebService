@@ -23,7 +23,17 @@ router.route('/users')
 
 .post(function(req,res) {
 
+  console.log("=====================================")
+  console.log("body")
   console.log(req.body)
+  console.log("=====================================")
+  console.log("params")
+  console.log(req.params)
+  console.log("=====================================")
+  console.log("headers")
+  console.log(req.headers)
+  console.log("=====================================")
+
   var callBack = function(deserialized) {
     User.findOne({email: deserialized.email}, function(err, user) {
 
