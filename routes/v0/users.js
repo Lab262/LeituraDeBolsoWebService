@@ -23,7 +23,7 @@ router.route('/users')
 
 .post(function(req,res) {
 
-
+  console.log(req.body)
   var callBack = function(deserialized) {
     User.findOne({email: deserialized.email}, function(err, user) {
 
@@ -49,6 +49,7 @@ router.route('/users')
            Mailer.sentMailVerificationLink(newUser,token)
 
            var serialized = objectSerializer.serializeObjectIntoJSONAPI(newUser)
+           console.log("user CRIADO")
 
            res.send({message: 'Please confirm your email id by clicking on link in your email:' + newUser.email , user: serialized, token: token})
        })
