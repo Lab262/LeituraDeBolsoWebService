@@ -20,7 +20,6 @@ router.route('/readings')
     var reading = new Reading(deserialized)
     reading.save( function(err, reading, numAffected) {
       res.status(201).json(objectSerializer.serializeObjectIntoJSONAPI(reading))
-
     })
   }
 
