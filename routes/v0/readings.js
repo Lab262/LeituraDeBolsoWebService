@@ -8,10 +8,19 @@ var objectSerializer = require('../../lib/object-serializer')
 router.route('/readings')
 
 .get(function(req,res) {
-  Reading.find(function(err,readings) {
+
+  var skip = parseInt(req.query.skip)
+  var limit = parseInt(req.query.limit)
+  
+  delete req.query.skip
+  delete req.query.limit
+
+  Reading.find(req.query).skip(skip).limit(limit).exec(function(err,readings) {
     var serialized = objectSerializer.serializeObjectIntoJSONAPI(readings)
     res.json(serialized)
   })
+
+
 })
 
 .post(function(req,res) {
