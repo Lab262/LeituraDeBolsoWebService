@@ -39,6 +39,11 @@ router.route('/users/:userId/readings')
             if(!user || user.readings === null) {
               errorHelper.entityNotFoundError(req,res)
             }
+
+            if (user.readings === null) {
+              return res.status(403).send({message: "user.readings is null"})
+            }
+            
             var userReading = user.readings.filter(function (reading) { return reading.readingId === deserialized.readingId})
             if (userReading.length > 0) {
               return res.status(403).send({message: "_readingId is already in use for this user"})
