@@ -12,6 +12,7 @@ var errorHelper= require('../../lib/error-handler')
 router.route('/auth/login')
 .post(function(req, res){
 
+
   verifyUserAndConfirmMailVerification(req,res,function(user) {
     authenticateUser(req,res,user)
   })
