@@ -25,9 +25,8 @@ router.route('/users/:userId/readings')
   .post(function(req,res) {
 
     var callBack = function(deserialized) {
-      console.log(req.body)
+    //  console.log(req.body)
 
-      console.log(deserialized)
       if (deserialized.readingId === null) {
         return res.status(422).send({message: "readingId is missing"})
       }
@@ -37,13 +36,11 @@ router.route('/users/:userId/readings')
         }
           User.findOne({ _id: req.params.userId },function(err,user) {
             if(!user || user.readings === null) {
-              errorHelper.entityNotFoundError(req,res)
-            }
-
-            if (user.readings === null) {
               return res.status(403).send({message: "user.readings is null"})
             }
-            
+
+
+
             var userReading = user.readings.filter(function (reading) { return reading.readingId === deserialized.readingId})
             if (userReading.length > 0) {
               return res.status(403).send({message: "_readingId is already in use for this user"})
@@ -96,12 +93,28 @@ router.route('/users/:userId/readings/:readingId')
     var callBack = function(deserialized) {
 
       var updateObj = objectSerializer.deserializerJSONAndCreateAUpdateClosure('readings.$.',deserialized)
+      console.log("LOG MAROTO ======");
+      console.log(updateObj);
+
       User.update(
         { _id: req.params.userId,
           'readings.readingId': req.params.readingId},
           updateObj,
-          mongooseCallbacks.callbackWithMessage(res,req,"user-reading successufully updated")
+          function(err) {
+            console.log("LOG MAROTO ======");
+            console.log(err);
+
+            if (err) {
+              return res.status(403).json(err);
+            }
+
+            return res.status(200).json({"message": "user-reading successfully updated"});
+          }
+
+
+          //mongooseCallbacks.callbackWithMessage(res,req,"user-reading successufully updated")
       )
+
     }
 
     objectSerializer.deserializeJSONAPIDataIntoObject(req.body,callBack)
