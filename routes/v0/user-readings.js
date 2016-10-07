@@ -11,7 +11,7 @@ router.route('/users/:userId/readings')
   .get(function(req,res) {
     var callback =  function(err,user) {
       if (user === null) {
-        return res.status(404).send({message: "user not found"})
+        return res.status(404).json({message: "user not found"})
       }
       res.json(user)
       var serialized = objectSerializer.serializeObjectIntoJSONAPI(user)
@@ -28,22 +28,22 @@ router.route('/users/:userId/readings')
     //  console.log(req.body)
 
       if (deserialized.readingId === null) {
-        return res.status(422).send({message: "readingId is missing"})
+        return res.status(422).json({message: "readingId is missing"})
       }
       Reading.count({_id: deserialized.readingId}, function (err, count){
         if(count <= 0){
-          return res.status(403).send({message: "readingId not corresponds to any reading"})
+          return res.status(403).json({message: "readingId not corresponds to any reading"})
         }
           User.findOne({ _id: req.params.userId },function(err,user) {
             if(!user || user.readings === null) {
-              return res.status(403).send({message: "user.readings is null"})
+              return res.status(403).json({message: "user.readings is null"})
             }
 
 
 
             var userReading = user.readings.filter(function (reading) { return reading.readingId === deserialized.readingId})
             if (userReading.length > 0) {
-              return res.status(403).send({message: "_readingId is already in use for this user"})
+              return res.status(403).json({message: "_readingId is already in use for this user"})
             }
             User.update( {id: req.params.userID},{
               $addToSet: {

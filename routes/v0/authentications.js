@@ -37,19 +37,19 @@ router.route('/auth/verifyEmail/:token')
 
   Jwt.verify(req.params.token, Environment.secret, function(err, decoded) {
     if(decoded === undefined){
-      return res.status(403).send({message: "invalid verification link"})
+      return res.status(403).send({message: "Link de verificação inválida."})
     }
 
     User.findOne({ _id: decoded.id, email: decoded.email}, function(err, user){
       if (user === null){
-        return res.status(403).send({message: "invalid verification link"})
+        return res.status(403).send({message: "Link de verificação inválida."})
       }
       if (user.isEmailVerified === true){
-        return res.status(403).send({message: "Account is already verified"})
+        return res.status(403).send({message: "Conta já está verificada."})
       }
       user.isEmailVerified = true
 
-      user.save(mongooseCallbacks.callbackWithMessage(res,req,"account sucessfully verified"))
+      user.save(mongooseCallbacks.callbackWithMessage(res,req,"Conta verificada com sucesso."))
 
     })
   })
@@ -62,13 +62,13 @@ router.route('/auth/resendVerificationEmailLink')
     errorHelper.errorHandler(err,req,res)
 
     if(!user){
-      return res.status(404).send({message: "Authentication failed. User not found"})
+      return res.status(404).send({message: "Falha na autenticação. Usuário não encontrado."})
     }
 
     var token = Jwt.sign(user.tokenData,Environment.secret)
     Mailer.sentMailVerificationLink(user,token)
 
-    return res.json({message:"account verification link is sucessfully send to your email id: " + user.email})
+    return res.json({message:"Link de verificação de conta foi enviado para o seu email: " + user.email})
   });
 
 })
@@ -80,19 +80,21 @@ router.route('/auth/forgotPassword')
   User.findOne({ email: req.body.email }, function(err, user){
     if (!err) {
       if (user === null){
-        return res.status(403).send({message:"This email has not been registered"})
+        return res.status(403).send({message:"Email não registrado."})
       }
+      console.console.log("AQUI ------1-1-2");
+      console.log(user);
       if (user.isEmailVerified === false ) {
 
         var token = Jwt.sign(user.tokenData,Environment.secret)
         Mailer.sentMailVerificationLink(user,token)
 
-        return res.status(403).send({message:"Your email address is not verified. please verify your email address to proceed"})
+        return res.status(403).send({message:"Seu endereço de email não está verificado. Por favor, verifique o seu endereço de e-mail para se logar."})
       } else {
         user.password = random
         user.save(function(err,user) {
           Mailer.sentMailForgotPassword(user, random)
-          return res.json({message: "password is send to your registered email id: " + req.body.email})
+          return res.json({message: "A senha foi enviada para o seu email cadastrado." + req.body.email})
         })
       }
     }
@@ -154,7 +156,7 @@ function verifyUserAndConfirmMailVerification(req,res,callbackAfterVerification)
     errorHelper.errorHandler(err,req,res)
 
     if(!user){
-      return res.status(422).send({message: "Authentication failed. User not found"})
+      return res.status(422).send({message: "Falha na autenticação. Usuário não encontrado."})
     }
 
     if(!user.isEmailVerified) {
