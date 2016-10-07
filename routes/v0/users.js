@@ -5,7 +5,6 @@ var Environment = require('../../config/environment')
 var Jwt = require('jsonwebtoken')
 var Mailer = require('../../lib/mailer')
 var errorHelper= require('../../lib/error-handler')
-var mongooseCallbacks = require('../../lib/mongoose-callbacks')
 var objectSerializer = require('../../lib/object-serializer')
 
 router.route('/users')
@@ -97,8 +96,13 @@ router.route('/users/:id')
     User.remove({
       _id: req.params.id
     },
-    mongooseCallbacks.callbackWithMessage(res,req,"user successufully deleted")
-    )
+    function(err) {
+      if (err) {
+        errorHelper.erorHandler(err,req,res)
+      } else {
+        return res.status(204).json({message: 'user successufully deleted'})
+      }
+    })
   })
 
 module.exports = router

@@ -3,7 +3,6 @@ var Reading = require('../../models/v0/reading')
 var express = require('express')
 var router = express.Router()
 var errorHelper= require('../../lib/error-handler')
-var mongooseCallbacks = require('../../lib/mongoose-callbacks')
 var objectSerializer = require('../../lib/object-serializer')
 
 router.route('/users/:userId/readings')
@@ -45,13 +44,18 @@ router.route('/users/:userId/readings')
             if (userReading.length > 0) {
               return res.status(403).json({message: "_readingId is already in use for this user"})
             }
+
+            console.log(deserialized)
+
             User.update( {id: req.params.userID},{
               $addToSet: {
                 readings:{
                   $each: [deserialized]}
                 }},
                 {upsert:true},
-                mongooseCallbacks.callbackWithMessage(res,req,"user-reading successfully added")
+                function (err) {
+                  return res.status(201).json({message: 'User reading succefully created'})
+                }
               )
             })
           })
@@ -70,8 +74,13 @@ router.route('/users/:userId/readings')
           []
          }
        },
-       mongooseCallbacks.callbackWithMessage(res,req,"user-readings successufully deleted")
-     )
+       function(err) {
+         if (err) {
+           errorHelper.erorHandler(err,req,res)
+         } else {
+           return res.status(204).json({message: "user-readings successufully deleted"})
+         }
+       })
   })
 
 router.route('/users/:userId/readings/:readingId')
@@ -109,11 +118,7 @@ router.route('/users/:userId/readings/:readingId')
             }
 
             return res.status(200).json({"message": "user-reading successfully updated"});
-          }
-
-
-          //mongooseCallbacks.callbackWithMessage(res,req,"user-reading successufully updated")
-      )
+          })
 
     }
 
@@ -130,8 +135,13 @@ router.route('/users/:userId/readings/:readingId')
            {_readingId: req.params.readingId}
          }
        },
-       mongooseCallbacks.callbackWithMessage(res,req,"user-reading successufully deleted")
-    )
+       function(err) {
+         if (err) {
+           errorHelper.erorHandler(err,req,res)
+         } else {
+           return res.status(204).json({message: 'user-reading successufully deleted'})
+         }
+       })
   })
 
 

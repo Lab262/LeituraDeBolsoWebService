@@ -2,7 +2,6 @@ var Reading = require('../../models/v0/reading')
 var express = require('express')
 var router = express.Router()
 var errorHelper= require('../../lib/error-handler')
-var mongooseCallbacks = require('../../lib/mongoose-callbacks')
 var objectSerializer = require('../../lib/object-serializer')
 
 router.route('/readings')
@@ -11,7 +10,7 @@ router.route('/readings')
 
   var skip = parseInt(req.query.skip)
   var limit = parseInt(req.query.limit)
-  
+
   delete req.query.skip
   delete req.query.limit
 
@@ -73,8 +72,13 @@ router.route('/readings/:id')
     Reading.remove({
       _id: req.params.id
     },
-    mongooseCallbacks.callbackWithMessage(res,req,"reading successufully deleted")
-  )
+    function(err) {
+      if (err) {
+        errorHelper.erorHandler(err,req,res)
+      } else {
+        return res.status(204).json({message: "reading successufully deleted"})
+      }
+    })
 })
 
 module.exports = router

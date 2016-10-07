@@ -4,7 +4,6 @@ var router = express.Router()
 var Environment = require('../../config/environment')
 var Jwt = require('jsonwebtoken')
 var JwtHelper = require('../../lib/jwthelper')
-var mongooseCallbacks = require('../../lib/mongoose-callbacks')
 var Mailer = require('../../lib/mailer')
 var PasswordGenerator = require('password-generator')
 var errorHelper= require('../../lib/error-handler')
@@ -49,7 +48,14 @@ router.route('/auth/verifyEmail/:token')
       }
       user.isEmailVerified = true
 
-      user.save(mongooseCallbacks.callbackWithMessage(res,req,"Conta verificada com sucesso."))
+
+      user.save(function(err) {
+        if (err) {
+          errorHelper.erorHandler(err,req,res)
+        } else {
+          return res.status(200).json({message: 'Email verified successufully'})
+        }
+      })
 
     })
   })
