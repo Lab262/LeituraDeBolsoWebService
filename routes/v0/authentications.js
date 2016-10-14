@@ -116,7 +116,7 @@ router.route('/auth/facebook')
     //CREATE USER AND LOGIN
 
     if (user === null) {
-      return res.json("USUARIO NAO EXISTE")
+      //return res.json("USUARIO NAO EXISTE")
 
       var newUser = new User(req.body)
       newUser.isEmailVerified = true
