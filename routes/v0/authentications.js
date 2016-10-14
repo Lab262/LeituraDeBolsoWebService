@@ -148,7 +148,7 @@ router.route('/auth/facebook')
           var token = Jwt.sign(user.tokenData,Environment.secret)
           return res.json({message: 'successufully logged throught facebook with email:' + user.email , user: user, token: token})
         } else {
-            console.log("NAO DEU MATCH");
+          return res.json({message: 'invalid password'})
         }
       })
     }
