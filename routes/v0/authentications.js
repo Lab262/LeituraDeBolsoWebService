@@ -98,7 +98,7 @@ router.route('/auth/forgotPassword')
         user.password = random
         user.save(function(err,user) {
           Mailer.sentMailForgotPassword(user, random)
-          return res.json({message: "A senha foi enviada para o seu email cadastrado." + req.body.email})
+          return res.json({message: "A senha foi enviada para o email cadastrado: " + req.body.email})
         })
       }
     }
