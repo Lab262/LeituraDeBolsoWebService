@@ -88,8 +88,6 @@ router.route('/auth/forgotPassword')
       if (user === null){
         return res.status(403).send({message:"Email não registrado."})
       }
-      console.console.log("AQUI ------1-1-2");
-      console.log(user);
       if (user.isEmailVerified === false ) {
 
         var token = Jwt.sign(user.tokenData,Environment.secret)
@@ -177,8 +175,6 @@ function verifyUserAndConfirmMailVerification(req,res,callbackAfterVerification)
 function authenticateUser(req,res,user) {
 
   JwtHelper.comparePassword(req.body.password, user.password, function(err, isMatch) {
-    console.log(isMatch)
-
     if (err) {
       return res.status(422).send({message: "Authentication failed. wrong password"})
     } if (isMatch) {
