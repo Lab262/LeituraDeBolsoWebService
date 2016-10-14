@@ -50,6 +50,6 @@ module.exports = {
      },
      server: serverProtocolAndHost(),
    facebook: {
-     passwordSecret: "A QWgd$j[QGe]Bh.Ugkf>?B3y696?2$#B2xwfN3hrVhFrE348g"
+     passwordSecret: "AQWgd$j[QGe]Bh.Ugkf>?B3y696?2$#B2xwfN3hrVhFrE348g"
    }
 }
