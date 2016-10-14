@@ -138,15 +138,22 @@ router.route('/auth/facebook')
         return res.json({message: 'successufully associate account throught facebook with email:' + user.email , user: newUser, token: token})
       })
     } else {
+      console.log('PASS BODY: '+req.body.facebook.password);
+      console.log('PASS USER: '+user.facebook.password);
 
-      JwtHelper.comparePassword(req.body.facebook.password, user.facebook.password, function(err, isMatch) {
+      JwtHelper.comparePassword(user.facebook.password, '$2a$10$/gXpFqzzLMXRgmt1glPTmOMO4Y6vpHyj./FCtCOflbFeMPy.Qri4C', function(err, isMatch) {
         if (err) {
+          console.log("DEU ERRO AQUI -------");
           return res.status(422).send({message: "Authentication failed. Wrogn password"})
         }
         if (isMatch) {
 
+          console.log("AQUI ------1-1-2-3");
+
           var token = Jwt.sign(user.tokenData,Environment.secret)
           return res.json({message: 'successufully logged throught facebook with email:' + user.email , user: user, token: token})
+        } else {
+            console.log("NAO DEU MATCH");
         }
       })
     }
