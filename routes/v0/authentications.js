@@ -7,6 +7,7 @@ var JwtHelper = require('../../lib/jwthelper')
 var Mailer = require('../../lib/mailer')
 var PasswordGenerator = require('password-generator')
 var errorHelper= require('../../lib/error-handler')
+var objectSerializer = require('../../lib/object-serializer')
 
 router.route('/auth/login')
 .post(function(req, res){
@@ -25,7 +26,9 @@ router.route('/auth/adminLogin')
       if (user.isAdmin) {
         authenticateUser(req,res,user)
       } else {
-        return res.status(422).send({message: "This login is not from a system admin"})
+        var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("Esse login não e de um usuário administrador", "email")
+        return res.status(422).json(error)
+
       }
   })
 
@@ -36,15 +39,20 @@ router.route('/auth/verifyEmail/:token')
 
   Jwt.verify(req.params.token, Environment.secret, function(err, decoded) {
     if(decoded === undefined){
-      return res.status(403).send({message: "Link de verificação inválida."})
-    }
+      var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("Link de verificação inválida.", "email")
+      return res.status(403).json(error)
+        }
 
     User.findOne({ _id: decoded.id, email: decoded.email}, function(err, user){
       if (user === null){
-        return res.status(403).send({message: "Link de verificação inválida."})
+        var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("Link de verificação inválida.", "email")
+        return res.status(403).json(error)
+
       }
       if (user.isEmailVerified === true){
-        return res.status(403).send({message: "Conta já está verificada."})
+        var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("Email já verificado", "email")
+        return res.status(403).json(error)
+
       }
       user.isEmailVerified = true
 
@@ -68,7 +76,8 @@ router.route('/auth/resendVerificationEmailLink')
     errorHelper.errorHandler(err,req,res)
 
     if(!user){
-      return res.status(404).send({message: "Falha na autenticação. Usuário não encontrado."})
+      var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("Email não registrado", "email")
+      return res.status(422).json(error)
     }
 
     var token = Jwt.sign(user.tokenData,Environment.secret)
@@ -86,14 +95,15 @@ router.route('/auth/forgotPassword')
   User.findOne({ email: req.body.email }, function(err, user){
     if (!err) {
       if (user === null){
-        return res.status(403).send({message:"Email não registrado."})
+        var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("Email não registrado", "email")
+        return res.status(422).json(error)
       }
       if (user.isEmailVerified === false ) {
 
         var token = Jwt.sign(user.tokenData,Environment.secret)
         Mailer.sentMailVerificationLink(user,token)
-
-        return res.status(403).send({message:"Seu endereço de email não está verificado. Por favor, verifique o seu endereço de e-mail para se logar."})
+        var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("Seu email ainda não foi confirmado, por favor verifique seu email para continuar", "email")
+        return res.status(403).json(error)
       } else {
         user.password = random
         user.save(function(err,user) {
@@ -109,7 +119,9 @@ router.route('/auth/forgotPassword')
 router.route('/auth/facebook')
 .post(function(req,res) {
   if (req.body.facebook === null || req.body.facebook.password === null || req.body.facebook.password.indexOf(Environment.facebook.passwordSecret) < 0) {
-    return res.status(403).send({message: "Invalid facebook password format"})
+    var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("Invalid facebook password format", "facebook.password")
+    return res.status(403).json(error)
+
   }
 
   User.findOne({ email : req.body.email }, function(err,user) {
@@ -141,14 +153,15 @@ router.route('/auth/facebook')
 
       JwtHelper.comparePassword(req.body.facebook.password, user.password, function(err, isMatch) {
         if (err) {
-          console.log("DEU ERRO AQUI -------");
-          return res.status(422).send({message: "Authentication failed. Wrogn password"})
+          var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("Falha na autenticação: Password Incorreto", "password")
+          return res.status(422).json(error)
         }
         if (isMatch) {
           var token = Jwt.sign(user.tokenData,Environment.secret)
           return res.json({message: 'successufully logged throught facebook with email:' + user.email , user: user, token: token})
         } else {
-          return res.json({message: 'invalid password'})
+          var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("Falha na autenticação: Password Incorreto", "password")
+          return res.status(422).json(error)
         }
       })
     }
@@ -162,11 +175,13 @@ function verifyUserAndConfirmMailVerification(req,res,callbackAfterVerification)
     errorHelper.errorHandler(err,req,res)
 
     if(!user){
-      return res.status(422).send({message: "Falha na autenticação. Usuário não encontrado."})
+      var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("Falha na autenticação. Usuário não encontrado.", "email")
+      return res.status(422).json(error)
     }
 
     if(!user.isEmailVerified) {
-      return res.status(403).send({message: "Your email address is not verified. please verify your email address to proceed"})
+      var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("Seu email ainda não foi verificado, por favor verifique seu email para continuar", "email")
+      return res.status(403).json(error)
     } else {
       callbackAfterVerification(user)
     }
@@ -178,7 +193,8 @@ function authenticateUser(req,res,user) {
 
   JwtHelper.comparePassword(req.body.password, user.password, function(err, isMatch) {
     if (err) {
-      return res.status(422).send({message: "Authentication failed. wrong password"})
+      var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("Falha na autenticação: Password Incorreto", "password")
+      return res.status(422).json(error)
     } if (isMatch) {
 
       var result = {
@@ -188,7 +204,8 @@ function authenticateUser(req,res,user) {
 
       return res.json(result)
     } else {
-      return res.status(422).send({message: "Authentication failed. Wrogn password"})
+      var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("Falha na autenticação: Password Incorreto", "password")
+      return res.status(422).json(error)
     }
   })
 }
