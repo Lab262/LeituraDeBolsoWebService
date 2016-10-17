@@ -19,7 +19,6 @@ router.route('/readings')
     res.json(serialized)
   })
 
-
 })
 
 .post(function(req,res) {

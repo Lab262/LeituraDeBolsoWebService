@@ -5,6 +5,38 @@ var router = express.Router()
 var errorHelper= require('../../lib/error-handler')
 var objectSerializer = require('../../lib/object-serializer')
 
+
+router.route('/users/:userId/readingsOfTheWeek')
+
+  .get(function(req,res) {
+
+    User.findOne({ _id: req.params.userId}).select('readings.readingId').exec().then(
+    function(user) {
+
+      var readingsArray = user.readings.map(function(currentValue,index,arr) {
+          return currentValue.readingId
+      })
+
+      var query = {
+        "_id": { "$nin": readingsArray }
+      }
+
+      Reading.find(query).skip(parseInt(req.query.skip)).limit(parseInt(req.query.limit)).sort({ readOfTheWeek: 'descending'}).exec().then(
+        function(reading){
+          return  res.json(reading)
+
+      },function(err) {
+        return  res.json(err)
+
+      })
+
+    },
+    function(err) {
+        return  res.json(err)
+    })
+
+  })
+
 router.route('/users/:userId/readings')
 
   .get(function(req,res) {
@@ -123,7 +155,6 @@ router.route('/users/:userId/readings/:readingId')
     }
 
     objectSerializer.deserializeJSONAPIDataIntoObject(req.body,callBack)
-
 
   })
 
