@@ -90,7 +90,6 @@ router.route('/auth/resendVerificationEmailLink')
 
 router.route('/auth/forgotPassword')
 .post(function(req,res) {
-  var random = PasswordGenerator(12, false)
 
   User.findOne({ email: req.body.email }, function(err, user){
     if (!err) {
@@ -98,21 +97,82 @@ router.route('/auth/forgotPassword')
         var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("Email não registrado", "email")
         return res.status(422).json(error)
       }
-      if (user.isEmailVerified === false ) {
+      if (user.isEmailVerified === false) {
 
         var token = Jwt.sign(user.tokenData,Environment.secret)
         Mailer.sentMailVerificationLink(user,token)
         var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("Seu email ainda não foi confirmado, por favor verifique seu email para continuar", "email")
         return res.status(403).json(error)
       } else {
-        user.password = random
-        user.save(function(err,user) {
-          Mailer.sentMailForgotPassword(user, random)
+
+          var token = Jwt.sign(user.tokenData,Environment.secret)
+          Mailer.sentMailForgotPasswordLink(user, token)
+
           return res.json({message: "A senha foi enviada para o email cadastrado: " + req.body.email})
-        })
       }
     }
   })
+
+})
+
+router.route('/auth/forgotPasswordConfirmed/:token')
+.get(function(req,res) {
+
+  // return res.json(req.params.token)
+
+  Jwt.verify(req.params.token, Environment.secret, function(err, decoded) {
+    if(decoded === undefined){
+      var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("Link de verificação inválida.", "password")
+      return res.status(403).json(error)
+        }
+
+    User.findOne({ _id: decoded.id, email: decoded.email}, function(err, user){
+      if (user === null){
+        var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("Link de renovação inválido.", "password")
+        return res.status(403).json(error)
+
+      }
+
+      var random = PasswordGenerator(12, false)
+      user.password = random
+      
+      Mailer.sentNewCredentials(user,random)
+
+      user.save(function(err) {
+        if (err) {
+          errorHelper.erorHandler(err,req,res)
+        } else {
+          return res.status(200).json({message: 'A nova senha foi enviada para o email '+ user.email})
+        }
+      })
+
+    })
+  })
+
+  // User.findOne({ email: req.body.email }, function(err, user){
+  //   if (!err) {
+  //     if (user === null){
+  //       var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("Email não registrado", "email")
+  //       return res.status(422).json(error)
+  //     }
+  //     if (user.isEmailVerified === false) {
+  //
+  //       var token = Jwt.sign(user.tokenData,Environment.secret)
+  //       Mailer.sentMailVerificationLink(user,token)
+  //       var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("Seu email ainda não foi confirmado, por favor verifique seu email para continuar", "email")
+  //       return res.status(403).json(error)
+  //     } else {
+  //
+  //       var token = Jwt.sign(user.tokenData,Environment.secret)
+  //       Mailer.sentMailVerificationLink(user,token)
+  //
+  //       user.save(function(err,user) {
+  //         Mailer.sentMailForgotPassword(user, random)
+  //         return res.json({message: "A senha foi enviada para o email cadastrado: " + req.body.email})
+  //       })
+  //     }
+  //   }
+  // })
 
 })
 

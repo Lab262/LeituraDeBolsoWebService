@@ -46,7 +46,9 @@ module.exports = {
        username: "leituradebolsoapp@gmail.com",
        password: "leitura123",
        accountName: "Leitura de bolso",
-       verifyEmailUrl: "api/v0/auth/verifyEmail"
+       verifyEmailUrl: "api/v0/auth/verifyEmail",
+       forgotPasswordConfirmedUrl: "api/v0/auth/forgotPasswordConfirmed"
+
      },
      server: serverProtocolAndHost(),
    facebook: {
