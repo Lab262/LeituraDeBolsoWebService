@@ -161,11 +161,8 @@ router.route('/users/:userId/readings/:readingId')
   .delete(function(req,res) {
     User.update(
       {_id: req.params.userId},
-      { $pull:
-        {'readings':
-           {_readingId: req.params.readingId}
-         }
-       },
+        {'readings':[]
+         },
        function(err) {
          if (err) {
            errorHelper.erorHandler(err,req,res)

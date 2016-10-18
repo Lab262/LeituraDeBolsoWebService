@@ -27,7 +27,8 @@ router.route('/users')
 
             if (user !== null) {
               if (user.isEmailVerified) {
-                return res.status(403).send({message: "This email is already in use"})
+                var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("This email is already in use", "email")
+                return res.status(403).json(error)
               } else {
                 User.remove({email: deserialized.email}, function (err) {
                   errorHelper.errorHandler(err,req,res)
