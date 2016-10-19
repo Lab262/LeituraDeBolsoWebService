@@ -48,8 +48,7 @@ router.route('/readings/:id')
       function(err,reading) {
         errorHelper.errorHandler(err,req,res)
           // var serialized = objectSerializer.serializeObjectIntoJSONAPI(reading)
-          console.log(reading)
-        return res.json(reading);
+          return res.json({message: 'reading successufully updated'})
       })
 
   }

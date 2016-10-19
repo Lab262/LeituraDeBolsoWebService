@@ -148,15 +148,17 @@ router.route('/users/:userId/readings/:readingId')
     objectSerializer.deserializeJSONAPIDataIntoObject(req.body).then(function(deserialized) {
 
       var updateObj = objectSerializer.deserializerJSONAndCreateAUpdateClosure('',deserialized)
+      return UserReading.update({readingId: req.params.readingId},updateObj).exec()
 
-      UserReading.update(
-        {readingId: req.params.readingId},
-        updateObj,
-        function(err,userReading) {
-          errorHelper.errorHandler(err,req,res)
-            var serialized = objectSerializer.serializeObjectIntoJSONAPI(userReading)
-          return res.json(serialized);
-        })
+
+    }).then(function(userReading) {
+
+      return res.json({message: 'user reading successufully updated'})
+
+    }).then(function(err) {
+
+      var error = objectSerializer.serializeSimpleErrorIntoJSONAPI(JSON.stringify(err))
+      return res.status(403).json(error)
     })
 
   })
