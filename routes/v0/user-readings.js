@@ -11,16 +11,12 @@ router.route('/users/:userId/readingsOfTheWeek')
 
   .get(function(req,res) {
 
-  //   Reading.find({}).skip(parseInt(req.query.skip)).limit(parseInt(req.query.limit)).sort({ readOfTheDay: 'descending'}).exec().then( function(docs) {
-  //
-  //       console.log(docs);
-  //       return res.json(docs)
-  // }).then(function(err){
-  //   return res.json(err);
-  // });
-
     UserReading.find({ userId: req.params.userId}).exec().then(
     function(userReadings) {
+
+      if (req.query.limit > 7) {
+        req.query.limit = 7;
+      }
 
       var readingsArray = userReadings.map(function(currentValue,index,arr) {
           return currentValue.readingId
