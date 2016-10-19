@@ -11,10 +11,18 @@ router.route('/users/:userId/readingsOfTheWeek')
 
   .get(function(req,res) {
 
-    User.findOne({ _id: req.params.userId}).select('readings.readingId').exec().then(
-    function(user) {
+  //   Reading.find({}).skip(parseInt(req.query.skip)).limit(parseInt(req.query.limit)).sort({ readOfTheDay: 'descending'}).exec().then( function(docs) {
+  //
+  //       console.log(docs);
+  //       return res.json(docs)
+  // }).then(function(err){
+  //   return res.json(err);
+  // });
 
-      var readingsArray = user.readings.map(function(currentValue,index,arr) {
+    UserReading.find({ userId: req.params.userId}).exec().then(
+    function(userReadings) {
+
+      var readingsArray = userReadings.map(function(currentValue,index,arr) {
           return currentValue.readingId
       })
 
@@ -22,19 +30,14 @@ router.route('/users/:userId/readingsOfTheWeek')
         "_id": { "$nin": readingsArray }
       }
 
-      Reading.find(query).skip(parseInt(req.query.skip)).limit(parseInt(req.query.limit)).sort({ readOfTheWeek: 'descending'}).exec().then(
-        function(reading){
-          var serialized = objectSerializer.serializeObjectIntoJSONAPI(reading)
+      return Reading.find(query).skip(parseInt(req.query.skip)).limit(parseInt(req.query.limit)).sort({ readOfTheDay: 'descending'}).exec()
 
-          return  res.json(serialized)
+    }).then(function(reading){
 
-      },function(err) {
-        return  res.json(err)
-
-      })
-
-    },
-    function(err) {
+        var serialized = objectSerializer.serializeObjectIntoJSONAPI(reading)
+        return  res.json(serialized)
+    })
+    .then(function(err) {
         return  res.json(err)
     })
 

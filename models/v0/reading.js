@@ -14,7 +14,7 @@ var ReadingSchema   = new Schema({
       type: String,
       required: [true, 'required title is missing']
     },
-    readOfTheWeek: {
+    readOfTheDay: {
       type: Boolean,
       required: false,
       default: false
