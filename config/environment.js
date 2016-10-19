@@ -2,8 +2,8 @@
 function databaseHost() {
   switch (process.env.NODE_ENV) {
       case 'development':
-        return  "mongodb://developers:Ufu-2Ss-W95-Az3@ds021356.mlab.com:21356/leituradebolso-localtest"
-        // return  "mongodb://localhost:/27017/test"
+        // return  "mongodb://developers:Ufu-2Ss-W95-Az3@ds021356.mlab.com:21356/leituradebolso-localtest"
+        return  "mongodb://localhost:/27017/test"
 
       case 'production':
         return "mongodb://developers:Ufu-2Ss-W95-Az3@ds147985.mlab.com:47985/leituradebolso"

@@ -40,31 +40,7 @@ var UserSchema = new Schema({
       id: String,
       token: String,
       password: String
-    },
-    readings: [
-      {
-        alreadyRead: {
-          type: Boolean,
-          required: false,
-          default: false
-        },
-        isFavorite: {
-          type: Boolean,
-          required: false,
-          default: false
-        },
-        isShared: {
-          type: Boolean,
-          required: false,
-          default: false
-        },
-        readingId: {
-          type: String,
-          ref: 'Reading',
-          required: [true, 'required readingId is missing']
-        }
     }
-  ]
 })
 
 

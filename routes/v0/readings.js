@@ -39,17 +39,17 @@ router.route('/readings/:id')
 .patch(function(req,res) {
 
   var callBack = function(deserialized) {
-    console.log(deserialized)
 
     var updateObj = objectSerializer.deserializerJSONAndCreateAUpdateClosure('',deserialized)
 
-    console.log(updateObj)
     Reading.update(
       {_id: req.params.id},
       updateObj,
       function(err,reading) {
         errorHelper.errorHandler(err,req,res)
-        return res.json({message: 'reading successufully updated'})
+          // var serialized = objectSerializer.serializeObjectIntoJSONAPI(reading)
+          console.log(reading)
+        return res.json(reading);
       })
 
   }
