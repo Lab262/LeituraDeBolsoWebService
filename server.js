@@ -39,7 +39,7 @@ app.use(function(req, res, next){
   // console.log(req.body)
 
   // Website you wish to allow to connect
-  // res.setHeader('Access-Control-Allow-Origin', '*');
+  //res.setHeader('Access-Control-Allow-Origin', '*');
 
   var isUserPostRoute = ((req.path.indexOf('users') > -1 && req.method === 'POST') || req.path.indexOf('auth') > -1)
 

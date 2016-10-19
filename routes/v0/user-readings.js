@@ -23,7 +23,9 @@ router.route('/users/:userId/readingsOfTheWeek')
 
       Reading.find(query).skip(parseInt(req.query.skip)).limit(parseInt(req.query.limit)).sort({ readOfTheWeek: 'descending'}).exec().then(
         function(reading){
-          return  res.json(reading)
+          var serialized = objectSerializer.serializeObjectIntoJSONAPI(reading)
+
+          return  res.json(serialized)
 
       },function(err) {
         return  res.json(err)
