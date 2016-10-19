@@ -16,7 +16,7 @@ router.route('/readings')
 
   Reading.find(req.query).skip(skip).limit(limit).exec(function(err,readings) {
     var serialized = objectSerializer.serializeObjectIntoJSONAPI(readings)
-    res.json(serialized)
+    return res.json(serialized)
   })
 
 })
@@ -26,7 +26,7 @@ router.route('/readings')
   var callBack = function(deserialized) {
     var reading = new Reading(deserialized)
     reading.save( function(err, reading, numAffected) {
-      res.status(201).json(objectSerializer.serializeObjectIntoJSONAPI(reading))
+      return res.status(201).json(objectSerializer.serializeObjectIntoJSONAPI(reading))
     })
   }
 
@@ -63,7 +63,7 @@ router.route('/readings/:id')
     Reading.findOne({ _id: req.params.id},function(err,reading) {
       errorHelper.errorHandler(err,req,res)
       var serialized = objectSerializer.serializeObjectIntoJSONAPI(reading)
-      res.json(serialized)
+      return res.json(serialized)
     })
   })
 

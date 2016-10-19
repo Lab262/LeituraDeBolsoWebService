@@ -36,10 +36,10 @@ app.set('superSecret', environment.secret)  // secret variable
 
 //Block secret urls midlleware
 app.use(function(req, res, next){
-  console.log(req.body)
+  // console.log(req.body)
 
   // Website you wish to allow to connect
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  // res.setHeader('Access-Control-Allow-Origin', '*');
 
   var isUserPostRoute = ((req.path.indexOf('users') > -1 && req.method === 'POST') || req.path.indexOf('auth') > -1)
 
@@ -55,13 +55,13 @@ app.use(morgan('dev'))
 
 routesSetup.setupRoutesAndVersions(app)
 
-app.use(function (err, req, res, next) {
-
-    if(err) {
-        return res.send(err.message)
-    }
-    next()
-})
+// app.use(function (err, req, res, next) {
+//
+//     // if(err) {
+//     //     return res.send(err.message)
+//     // }
+//     next()
+// })
 
 module.exports = app
 

@@ -44,10 +44,9 @@ router.route('/users/:userId/readings')
       if (user === null) {
         return res.status(404).json({message: "user not found"})
       }
-      res.json(user)
       var serialized = objectSerializer.serializeObjectIntoJSONAPI(user)
 
-        res.json(serialized)
+        return res.json(serialized)
         console.log(serialized)
     }
     User.findOne({ _id: req.params.userId}).select('readings').exec(callback)

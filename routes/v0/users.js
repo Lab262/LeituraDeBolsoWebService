@@ -16,7 +16,7 @@ router.route('/users')
   User.findOne({ _id: decodedUser.id},function(err,users) {
 
     var serialized = objectSerializer.serializeObjectIntoJSONAPI(users)
-    res.json(serialized)
+    return res.json(serialized)
   })
 })
 
@@ -49,7 +49,7 @@ router.route('/users')
 
            var serialized = objectSerializer.serializeObjectIntoJSONAPI(newUser)
 
-           res.send({message: 'Please confirm your email id by clicking on link in your email:' + newUser.email , user: serialized, token: token})
+           return res.send({message: 'Please confirm your email id by clicking on link in your email:' + newUser.email , user: serialized, token: token})
        })
     })
   }
@@ -74,7 +74,7 @@ router.route('/users/:id')
 
         user.save(function(err,user) {
 
-          res.json({message: 'user successufully updated'})
+          return res.json({message: 'user successufully updated'})
         })
       })
   }
@@ -89,7 +89,7 @@ router.route('/users/:id')
       errorHelper.errorHandler(err,req,res)
       var serialized = objectSerializer.serializeObjectIntoJSONAPI(user)
 
-      res.json(serialized)
+      return res.json(serialized)
     })
   })
 
