@@ -18,5 +18,5 @@ exports.setupRoutesAndVersions = function(app) {
     }
   }
 }
-} 
+}
 //Router setup

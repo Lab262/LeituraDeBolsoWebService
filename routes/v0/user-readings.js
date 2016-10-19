@@ -7,7 +7,7 @@ var errorHelper= require('../../lib/error-handler')
 var objectSerializer = require('../../lib/object-serializer')
 
 
-router.route('/users/:userId/readingsOfTheWeek')
+router.route('/users/:userId/readingsOfTheDay')
 
   .get(function(req,res) {
 
