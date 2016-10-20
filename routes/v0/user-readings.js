@@ -11,6 +11,11 @@ router.route('/users/:userId/readingsOfTheDay')
 
   .get(function(req,res) {
 
+
+    //Verificar se o user já tem um userreding de hoje e se tiver retornar uma mensagem ao inves de uma leitura
+
+
+
     UserReading.find({ userId: req.params.userId}).exec().then(
     function(userReadings) {
 
@@ -144,15 +149,28 @@ router.route('/users/:userId/readings/:readingId')
 
   .patch(function(req,res) {
 
+    if (req.body.data == null || req.body.data.attributes == null || Object.keys(req.body.data.attributes).length < 1) {
+      var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("data:{ attributes: []} não contem nenhum dado a ser atualizado  ")
+      return res.status(403).json(error)
+
+    }
+
     objectSerializer.deserializeJSONAPIDataIntoObject(req.body).then(function(deserialized) {
 
       var updateObj = objectSerializer.deserializerJSONAndCreateAUpdateClosure('',deserialized)
       return UserReading.update({readingId: req.params.readingId},updateObj).exec()
 
-
     }).then(function(userReading) {
 
-      return res.json({message: 'user reading successufully updated'})
+      if (userReading.n < 1) {
+        var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("reading-id não corresponde a uma reading")
+        return res.status(403).json(error)
+      } else {
+        //
+
+        return res.json({message: 'user reading successufully updated'})
+
+      }
 
     }).then(function(err) {
 
