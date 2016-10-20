@@ -53,6 +53,7 @@ router.route('/users/:userId/readings')
           return res.json(serialized)
       },
       function(err) {
+        return  res.json(err)
     })
 
   })
@@ -157,7 +158,7 @@ router.route('/users/:userId/readings/:readingId')
     objectSerializer.deserializeJSONAPIDataIntoObject(req.body).then(function(deserialized) {
 
       var updateObj = objectSerializer.deserializerJSONAndCreateAUpdateClosure('',deserialized)
-      return UserReading.findOneAndUpdate({readingId: req.params.readingId},updateObj).exec()
+      return UserReading.findOneAndUpdate({readingId: req.params.readingId},updateObj,{"new": true}).exec()
 
     }).then(function(userReading) {
 
@@ -166,8 +167,7 @@ router.route('/users/:userId/readings/:readingId')
         return res.status(403).json(error)
       } else {
         //
-
-        return res.json({message: 'user reading successufully updated'})
+        return res.json(objectSerializer.serializeObjectIntoJSONAPI(userReading))
 
       }
 

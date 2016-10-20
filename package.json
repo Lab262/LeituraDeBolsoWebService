@@ -16,7 +16,7 @@
     "express": "~4.0.0",
     "jsonapi-serializer": "^3.4.0",
     "jsonwebtoken": "^7.1.9",
-    "mongoose": "~4.2.9",
+    "mongoose": "^4.2.9",
     "morgan": "^1.7.0",
     "nodemailer": "^2.6.0",
     "nodemailer-mailgun-transport": "^1.2.2",

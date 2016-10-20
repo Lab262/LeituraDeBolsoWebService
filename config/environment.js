@@ -40,7 +40,6 @@ module.exports = {
     'secret': ',9@4gk8+nYw,3EL2{Law7vzFZE46Ni&An=(88bY/Rpno$vnLbY',
     database: {
       host: databaseHost()
-
     },
       email: {
        username: "leituradebolsoapp@gmail.com",
