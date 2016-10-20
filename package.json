@@ -2,8 +2,8 @@
   "name": "node-api",
   "main": "server.js",
   "engines": {
-    "node": "5.10.0",
-    "npm": "2.14.21"
+    "node": "6.5.0",
+    "npm": "3.10.3"
   },
   "scripts": {
     "test": "npm run test-unit",

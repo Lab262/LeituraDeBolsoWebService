@@ -13,8 +13,7 @@ router.route('/users/:userId/readingsOfTheDay')
 
 
     //Verificar se o user já tem um userreding de hoje e se tiver retornar uma mensagem ao inves de uma leitura
-
-
+    UserReading.find({ userId: req.params.userId}).exec().then
 
     UserReading.find({ userId: req.params.userId}).exec().then(
     function(userReadings) {
@@ -158,7 +157,7 @@ router.route('/users/:userId/readings/:readingId')
     objectSerializer.deserializeJSONAPIDataIntoObject(req.body).then(function(deserialized) {
 
       var updateObj = objectSerializer.deserializerJSONAndCreateAUpdateClosure('',deserialized)
-      return UserReading.update({readingId: req.params.readingId},updateObj).exec()
+      return UserReading.findOneAndUpdate({readingId: req.params.readingId},updateObj).exec()
 
     }).then(function(userReading) {
 
