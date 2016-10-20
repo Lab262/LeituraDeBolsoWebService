@@ -90,7 +90,7 @@ router.route('/users/:userId/readings')
 
          if(countUsers <= 0){
 
-           var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("userId not corresponds to any user")
+           var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("reading-id não corresponde a uma reading")
            return res.status(403).json(error)
          }
          return UserReading.count({'userId': objectDeserialized.userId, 'readingId': objectDeserialized.readingId}).exec()
@@ -98,7 +98,7 @@ router.route('/users/:userId/readings')
     .then(function(countUserReadings){
 
          if(countUserReadings > 0) {
-           var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("readingId is already in use for this user")
+           var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("esse reading já pertence a esse usuário")
            return res.status(403).json(error)
          } else {
 

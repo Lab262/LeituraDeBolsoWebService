@@ -61,7 +61,7 @@ router.route('/auth/verifyEmail/:token')
         if (err) {
           errorHelper.erorHandler(err,req,res)
         } else {
-          return res.status(200).json({message: 'Email verified successufully'})
+          return res.status(200).json({message: 'Email verificado com sucesso'})
         }
       })
 
@@ -135,7 +135,7 @@ router.route('/auth/forgotPasswordConfirmed/:token')
 
       var random = PasswordGenerator(12, false)
       user.password = random
-      
+
       Mailer.sentNewCredentials(user,random)
 
       user.save(function(err) {
@@ -213,14 +213,14 @@ router.route('/auth/facebook')
 
       JwtHelper.comparePassword(req.body.facebook.password, user.password, function(err, isMatch) {
         if (err) {
-          var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("Falha na autenticação: Password Incorreto", "password")
+          var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("Falha na autenticação: senha incorreta", "password")
           return res.status(422).json(error)
         }
         if (isMatch) {
           var token = Jwt.sign(user.tokenData,Environment.secret)
           return res.json({message: 'successufully logged throught facebook with email:' + user.email , user: user, token: token})
         } else {
-          var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("Falha na autenticação: Password Incorreto", "password")
+          var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("Falha na autenticação: senha incorreta", "password")
           return res.status(422).json(error)
         }
       })
@@ -253,7 +253,7 @@ function authenticateUser(req,res,user) {
 
   JwtHelper.comparePassword(req.body.password, user.password, function(err, isMatch) {
     if (err) {
-      var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("Falha na autenticação: Password Incorreto", "password")
+      var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("Falha na autenticação: senha Incorreta", "password")
       return res.status(422).json(error)
     } if (isMatch) {
 
@@ -264,7 +264,7 @@ function authenticateUser(req,res,user) {
 
       return res.json(result)
     } else {
-      var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("Falha na autenticação: Password Incorreto", "password")
+      var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("Falha na autenticação: senha Incorreta", "password")
       return res.status(422).json(error)
     }
   })
