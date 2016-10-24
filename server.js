@@ -3,9 +3,6 @@
 //BASE SETUP
 // =============================================================================================================================
 
-//call the needed packages
-
-
 var express    = require('express')
 var cors = require('cors')
 var app        = express()
