@@ -6,6 +6,7 @@ all_tests:
   script:
    - npm install
    - npm test
+
 production:
   type: deploy
   script:
@@ -13,7 +14,19 @@ production:
   - echo "Y" |apt-get install libssl-dev
   - apt-get install -y rubygems
   - gem install dpl
-  - dpl --provider=heroku --app=leituradebolso --api-key=$HEROKU_PRODUCTION_API_KEY
-  
+  - dpl --provider=heroku --app=leituradebolso-production --api-key=$HEROKU_PRODUCTION_API_KEY
+
   only:
   - master
+
+stagging:
+  type: deploy
+  script:
+  - apt-get update -qy
+  - echo "Y" |apt-get install libssl-dev
+  - apt-get install -y rubygems
+  - gem install dpl
+  - dpl --provider=heroku --app=leituradebolso-stagging --api-key=$HEROKU_PRODUCTION_API_KEY
+
+  only:
+  - dev
