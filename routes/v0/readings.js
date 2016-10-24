@@ -56,7 +56,6 @@ router.route('/readings/:id')
       }
 
     }).then(function(err) {
-      console.log(err)
 
       var error = objectSerializer.serializeSimpleErrorIntoJSONAPI(JSON.stringify(err))
       return res.status(403).json(error)

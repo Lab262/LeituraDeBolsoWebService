@@ -11,26 +11,38 @@ router.route('/users/:userId/readingsOfTheDay')
 
   .get(function(req,res) {
 
+    UserReading.find({ userId: req.params.userId}).sort("-createdAt").exec().then(
+      function(userReadings) {
+        var userReadingsSorted = userReadings;
 
-    //Verificar se o user já tem um userreding de hoje e se tiver retornar uma mensagem ao inves de uma leitura
-    UserReading.find({ userId: req.params.userId}).exec().then
+        if (userReadings.length > 0) {
 
-    UserReading.find({ userId: req.params.userId}).exec().then(
-    function(userReadings) {
+          userReadingsSorted = userReadings.sort(function(a, b){return b.createdAt-a.createdAt})
 
-      if (req.query.limit > 7) {
-        req.query.limit = 7;
-      }
+          var readingDate = userReadingsSorted[0].createdAt.setHours(0, 0, 0, 0);
+          var todayDate = new Date().setHours(0, 0, 0, 0);
 
-      var readingsArray = userReadings.map(function(currentValue,index,arr) {
+          if(readingDate === todayDate){
+
+            var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("You already download the reading of today")
+            return res.status(403).json(error)
+          }
+
+        }
+
+        if (req.query.limit > 7) {
+          req.query.limit = 7;
+        }
+
+        var readingsArray = userReadingsSorted.map(function(currentValue,index,arr) {
           return currentValue.readingId
-      })
+        })
 
-      var query = {
-        "_id": { "$nin": readingsArray }
-      }
+        var query = {
+          "_id": { "$nin": readingsArray }
+        }
 
-      return Reading.find(query).skip(parseInt(req.query.skip)).limit(parseInt(req.query.limit)).sort({ readOfTheDay: 'descending'}).exec()
+        return Reading.find(query).skip(parseInt(req.query.skip)).limit(parseInt(req.query.limit)).sort({ readOfTheDay: 'descending'}).exec()
 
     }).then(function(reading){
 
@@ -68,11 +80,11 @@ router.route('/users/:userId/readings')
 
       objectDeserialized = deserialized
     if (deserialized.readingId === null) {
-       var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("readingId is missing")
+       var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("reading-id is missing")
        return res.status(422).json(error)
      }
      if (deserialized.userId === null) {
-       var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("userId is missing")
+       var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("user-id is missing")
        return res.status(422).json(error)
      }
       return Reading.count({_id: deserialized.readingId}).exec()
@@ -82,7 +94,7 @@ router.route('/users/:userId/readings')
 
       if(countReadings <= 0){
 
-        var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("readingId not corresponds to any reading")
+        var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("reading-id não corresponde a uma leitura")
         return res.status(403).json(error)
       }
      return User.count({_id: objectDeserialized.userId}).exec()
@@ -91,7 +103,7 @@ router.route('/users/:userId/readings')
 
          if(countUsers <= 0){
 
-           var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("reading-id não corresponde a uma reading")
+           var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("user-id não corresponde a um usuário")
            return res.status(403).json(error)
          }
          return UserReading.count({'userId': objectDeserialized.userId, 'readingId': objectDeserialized.readingId}).exec()

@@ -28,7 +28,17 @@ var UserReadingSchema = new Schema({
     ref: 'User',
     required: [true, 'required userId is missing']
 
-  }
+  },
+  createdAt : {
+    type: Date,
+    required: false,
+    default: Date.now
+  },
+  updatedAt: {
+    type: Date,
+    required: false,
+    default: Date.now
+  },
 })
 
 module.exports = mongoose.model('UserReading', UserReadingSchema)
