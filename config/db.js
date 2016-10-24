@@ -9,6 +9,7 @@ function setupDatabase(){  var mongoose   = require('mongoose')
   var db = mongoose.connection
   db.on('error', console.error.bind(console, 'connection error:'))
   db.once('open', function() {
+    mongoose.Promise = global.Promise;
   console.log('Mongolab database connected in ' + environment.database.host)
   })
 }

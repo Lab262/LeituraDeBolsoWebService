@@ -33,6 +33,15 @@ app.set('superSecret', environment.secret)  // secret variable
 
 //Block secret urls midlleware
 app.use(function(req, res, next){
+
+  // Website you wish to allow to connect
+    // res.setHeader('Access-Control-Allow-Origin', '*');
+
+    // Request methods you wish to allow
+    // res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+    // Request headers you wish to allow
+    // res.setHeader('Access-Control-Allow-Headers', 'content-type');
   // console.log(req.body)
 
   // Website you wish to allow to connect

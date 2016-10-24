@@ -14,7 +14,7 @@ router.route('/readings')
   delete req.query.skip
   delete req.query.limit
 
-  Reading.find(req.query).skip(skip).limit(limit).exec(function(err,readings) {
+  Reading.find(req.query).skip(skip).limit(limit).sort({ readOfTheDay: 'descending'}).exec(function(err,readings) {
     var serialized = objectSerializer.serializeObjectIntoJSONAPI(readings)
     return res.json(serialized)
   })
@@ -38,23 +38,29 @@ router.route('/readings/:id')
 
 .patch(function(req,res) {
 
-  var callBack = function(deserialized) {
+    // return res.json({"foi": "deu"})
+    objectSerializer.deserializeJSONAPIDataIntoObject(req.body).then(function(deserialized) {
 
-    var updateObj = objectSerializer.deserializerJSONAndCreateAUpdateClosure('',deserialized)
+      var updateObj = objectSerializer.deserializerJSONAndCreateAUpdateClosure('',deserialized)
+      return Reading.findOneAndUpdate({_id: req.params.id},updateObj,{"new": true}).exec()
 
-    Reading.update(
-      {_id: req.params.id},
-      updateObj,
-      function(err,reading) {
-        errorHelper.errorHandler(err,req,res)
-          // var serialized = objectSerializer.serializeObjectIntoJSONAPI(reading)
-          return res.json({message: 'reading successufully updated'})
-      })
+    }).then(function(reading) {
 
-  }
+      if (reading.n < 1) {
+        var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("id não corresponde a uma reading")
+        return res.status(403).json(error)
+      } else {
+        //
+        return res.json(objectSerializer.serializeObjectIntoJSONAPI(reading))
 
-  objectSerializer.deserializeJSONAPIDataIntoObject(req.body,callBack)
+      }
 
+    }).then(function(err) {
+      console.log(err)
+
+      var error = objectSerializer.serializeSimpleErrorIntoJSONAPI(JSON.stringify(err))
+      return res.status(403).json(error)
+    })
 
   })
 

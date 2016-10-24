@@ -13,11 +13,32 @@ router.route('/users')
 
   var token = req.headers['x-access-token']
   var decodedUser = Jwt.decode(token);
-  User.findOne({ _id: decodedUser.id},function(err,users) {
+
+  User.findOne({ _id: decodedUser.id}).exec().then(function(user) {
+
+    if (user.isAdmin) {
+
+      var skip = parseInt(req.query.skip)
+      var limit = parseInt(req.query.limit)
+      delete req.query.skip
+      delete req.query.limit
+      return User.find(req.query).skip(skip).limit(limit).sort({ isAdmin: 'descending'}).exec()
+    } else {
+
+      var serialized = objectSerializer.serializeObjectIntoJSONAPI(users)
+      return res.json(serialized)
+    }
+
+  }).then(function(users) {
 
     var serialized = objectSerializer.serializeObjectIntoJSONAPI(users)
     return res.json(serialized)
+  }).then(function(err) {
+
+    var error = objectSerializer.serializeSimpleErrorIntoJSONAPI(JSON.stringify(err))
+    return res.status(403).json(error)
   })
+
 })
 
 .post(function(req,res) {
