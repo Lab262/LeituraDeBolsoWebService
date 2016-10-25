@@ -8,15 +8,26 @@ router.route('/readings')
 
 .get(function(req,res) {
 
-  var skip = parseInt(req.query.skip)
-  var limit = parseInt(req.query.limit)
+  var pageVariables = objectSerializer.deserializeQueryPaginationIntoVariables(req)
+  var totalLength = 0
 
-  delete req.query.skip
-  delete req.query.limit
+  Reading.count(req.query).exec().then(function(count){
 
-  Reading.find(req.query).skip(skip).limit(limit).sort({ readOfTheDay: 'descending'}).exec(function(err,readings) {
-    var serialized = objectSerializer.serializeObjectIntoJSONAPI(readings)
+   totalLength = count
+   if (totalLength > 0) {
+
+     return Reading.find(req.query).skip(pageVariables.skip).limit(pageVariables.limit).sort({ readOfTheDay: 'descending'}).exec()
+   } else {
+
+     return res.status(200).json({data: []});
+   }
+
+ }).then(function(readings) {
+   
+    var serialized = objectSerializer.serializeObjectIntoJSONAPI(readings,totalLength, pageVariables.limit)
     return res.json(serialized)
+  }).then(function(err){
+
   })
 
 })
