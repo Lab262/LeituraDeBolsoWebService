@@ -57,7 +57,7 @@ router.route('/users')
 
             if (user !== null) {
               if (user.isEmailVerified) {
-                var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("This email is already in use", "email")
+                var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("Esse email já está em uso", "email")
                 return res.status(403).json(error)
               } else {
                 User.remove({email: deserialized.email}, function (err) {
@@ -79,7 +79,7 @@ router.route('/users')
 
            var serialized = objectSerializer.serializeObjectIntoJSONAPI(newUser)
 
-           return res.send({message: 'Please confirm your email id by clicking on link in your email:' + newUser.email , user: serialized, token: token})
+           return res.send({message: 'Por favor, confirme seu email clicando no link em seu email:' + newUser.email , user: serialized, token: token})
        })
     })
   }
