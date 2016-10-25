@@ -1,5 +1,6 @@
 var mongoose     = require('mongoose')
 var Schema       = mongoose.Schema
+var UserReading = require('./user-reading')
 
 var ReadingSchema   = new Schema({
     authorName: {
@@ -40,5 +41,23 @@ var ReadingSchema   = new Schema({
     },
     emojis: [String]
 })
+
+ReadingSchema.pre('remove', function(next) {
+    // 'this' is the client being removed. Provide callbacks here if you want
+    console.log(this._id)
+
+    console.log({'readingId': this._id})
+    // UserReading.remove({readingId: JSON.stringify(this._id)}).exec();
+    // Submission.remove({client_id: this._id}).exec();
+    UserReading.remove({'readingId': this._id}, function(err, userReading) {
+      console.log(userReading)
+      console.log(err)
+      // fulfill();
+      return next();
+    });
+      // return new Promise(function (fulfill, reject){
+      //
+      // })
+});
 
 module.exports = mongoose.model('Reading', ReadingSchema)

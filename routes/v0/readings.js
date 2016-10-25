@@ -23,7 +23,7 @@ router.route('/readings')
    }
 
  }).then(function(readings) {
-   
+
     var serialized = objectSerializer.serializeObjectIntoJSONAPI(readings,totalLength, pageVariables.limit)
     return res.json(serialized)
   }).then(function(err){
@@ -83,16 +83,22 @@ router.route('/readings/:id')
   })
 
   .delete(function(req,res) {
-    Reading.remove({
-      _id: req.params.id
-    },
-    function(err) {
-      if (err) {
-        errorHelper.erorHandler(err,req,res)
-      } else {
-        return res.status(204).json({message: "reading successufully deleted"})
+    Reading.findOne({_id: req.params.id}).exec().then(function(reading){
+
+      if (reading === null ){
+        var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("Reading not found")
+        return res.status(403).json(error)
       }
+      return reading.remove()
+    }).then(function(reading) {
+      return res.status(204).json({message: "reading successufully deleted"})
+    
+    }).then(function(err){
+      var error = objectSerializer.serializeSimpleErrorIntoJSONAPI(JSON.stringify(err))
+      return res.status(403).json(error)
+
     })
+
 })
 
 module.exports = router
