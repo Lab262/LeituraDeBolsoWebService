@@ -24,8 +24,7 @@ router.route('/users/:userId/readingsOfTheDay')
 
           if(readingDate === todayDate){
 
-            var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("You already download the reading of today")
-            return res.status(403).json(error)
+            return res.status(200).json({data: []});
           }
 
         }
