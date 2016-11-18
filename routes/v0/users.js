@@ -42,7 +42,7 @@ router.route('/users')
 
     var serialized = objectSerializer.serializeObjectIntoJSONAPI(users, totalLength, pageVariables.limit)
     return res.json(serialized)
-  }).then(function(err) {
+  }).catch(function(err) {
 
     var error = objectSerializer.serializeSimpleErrorIntoJSONAPI(JSON.stringify(err))
     return res.status(403).json(error)

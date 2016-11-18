@@ -2,7 +2,7 @@
 function databaseHost() {
   switch (process.env.NODE_ENV) {
     case 'development':
-    return  "mongodb://localhost:/27017/test"
+    return  "mongodb://developers:Ufu-2Ss-W95-Az3@ds049624.mlab.com:49624/leituradebolso-stagging"
     case 'staging':
     return "mongodb://developers:Ufu-2Ss-W95-Az3@ds049624.mlab.com:49624/leituradebolso-stagging"
     case 'production':
@@ -20,7 +20,7 @@ function serverProtocolAndHost() {
     case 'development':
     return {
       protocol: "http://",
-      host: "localhost:8080",
+      host: "leituradebolso-stagging.herokuapp.com",
     }
     case 'staging':
     return {

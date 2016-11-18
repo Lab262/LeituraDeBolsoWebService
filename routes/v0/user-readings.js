@@ -48,7 +48,7 @@ router.route('/users/:userId/readingsOfTheDay')
         var serialized = objectSerializer.serializeObjectIntoJSONAPI(reading)
         return  res.json(serialized)
     })
-    .then(function(err) {
+    .catch(function(err) {
         return  res.json(err)
     })
 
@@ -123,7 +123,7 @@ router.route('/users/:userId/readings')
 
           return res.status(201).json(objectSerializer.serializeObjectIntoJSONAPI(userReading))
        })
-       .then(function(err) {
+       .catch(function(err) {
 
          var error = objectSerializer.serializeSimpleErrorIntoJSONAPI(JSON.stringify(err))
          return res.status(403).json(error)
@@ -169,7 +169,7 @@ router.route('/users/:userId/readings/:readingId')
     objectSerializer.deserializeJSONAPIDataIntoObject(req.body).then(function(deserialized) {
 
       var updateObj = objectSerializer.deserializerJSONAndCreateAUpdateClosure('',deserialized)
-      return UserReading.findOneAndUpdate({readingId: req.params.readingId},updateObj,{"new": true}).exec()
+      return UserReading.findOneAndUpdate({readingId: req.params.readingId},updateObj).exec()
 
     }).then(function(userReading) {
 
@@ -182,7 +182,7 @@ router.route('/users/:userId/readings/:readingId')
 
       }
 
-    }).then(function(err) {
+    }).catch(function(err) {
 
       var error = objectSerializer.serializeSimpleErrorIntoJSONAPI(JSON.stringify(err))
       return res.status(403).json(error)

@@ -26,7 +26,7 @@ router.route('/readings')
 
     var serialized = objectSerializer.serializeObjectIntoJSONAPI(readings,totalLength, pageVariables.limit)
     return res.json(serialized)
-  }).then(function(err){
+  }).catch(function(err){
 
   })
 
@@ -66,7 +66,7 @@ router.route('/readings/:id')
 
       }
 
-    }).then(function(err) {
+    }).catch(function(err) {
 
       var error = objectSerializer.serializeSimpleErrorIntoJSONAPI(JSON.stringify(err))
       return res.status(403).json(error)
@@ -93,7 +93,7 @@ router.route('/readings/:id')
     }).then(function(reading) {
       return res.status(204).json({message: "reading successufully deleted"})
     
-    }).then(function(err){
+    }).catch(function(err){
       var error = objectSerializer.serializeSimpleErrorIntoJSONAPI(JSON.stringify(err))
       return res.status(403).json(error)
 
