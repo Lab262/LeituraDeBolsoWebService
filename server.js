@@ -51,8 +51,10 @@ app.use(function(req, res, next){
 
   if (!isUserPostRoute) {
     jwtHelper.verifyJsonWebToken(req,res,next,app)
+  } else {
+    next()
   }
-  next()
+  
 })
 
 
