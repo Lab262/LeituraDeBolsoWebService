@@ -169,7 +169,7 @@ router.route('/users/:userId/readings/:readingId')
     objectSerializer.deserializeJSONAPIDataIntoObject(req.body).then(function(deserialized) {
 
       var updateObj = objectSerializer.deserializerJSONAndCreateAUpdateClosure('',deserialized)
-      return UserReading.findOneAndUpdate({readingId: req.params.readingId},updateObj).exec()
+      return UserReading.findOneAndUpdate({readingId: req.params.readingId},updateObj,{upsert: true}).exec()
 
     }).then(function(userReading) {
 
