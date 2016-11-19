@@ -195,7 +195,7 @@ router.route('/users/:userId/readings/:readingId')
           }
         }
         
-        return UserReading.remove({ readingId: req.params.readingId}).exec()
+        return UserReading.remove({ readingId: req.params.readingId, userId: req.params.userId}).exec()
 
       } else {
         var error = objectSerializer.serializeSimpleErrorIntoJSONAPI("reading-id não corresponde a uma user reading")
