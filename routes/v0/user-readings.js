@@ -186,6 +186,8 @@ router.route('/users/:userId/readings/:readingId')
         newUserReading.isFavorite = userReading[0].isFavorite
         newUserReading.isShared = userReading[0].isShared
         newUserReading.alreadyRead = userReading[0].alreadyRead
+        newUserReading.updatedAt = userReading[0].updatedAt
+        newUserReading.createdAt = userReading[0].createdAt
 
         for (var param in updateObject) {
           if (updateObject.hasOwnProperty(param)) {
